@@ -1,0 +1,133 @@
+/* Booking Details Section */
+.booking-details-container {
+    padding: 4rem 2rem;
+    background: #fffcfd;
+    border-radius: 40px;
+    margin: 2rem 0;
+    border: 1px solid rgba(255, 182, 193, 0.2);
+    box-shadow: 0 10px 30px rgba(255, 117, 140, 0.03);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    color: var(--deep-pink);
+    font-family: 'Mitr', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.section-header p {
+    color: #a08484;
+    font-family: 'Mali', cursive;
+    margin-top: 0.5rem;
+}
+
+.booking-steps-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.step-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: white;
+    padding: 2rem;
+    border-radius: 24px;
+    border-left: 6px solid var(--primary-pink);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateX(10px);
+    box-shadow: 0 8px 30px rgba(255, 182, 193, 0.15);
+}
+
+.step-icon-box {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    background: var(--soft-pink);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--deep-pink);
+}
+
+.step-content h3 {
+    font-size: 1.25rem;
+    color: var(--deep-pink);
+    margin-bottom: 0.8rem;
+    font-family: 'Mitr', sans-serif;
+}
+
+.step-content p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #7c6a6a;
+    font-family: 'Mali', cursive;
+}
+
+.contact-highlight {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #fff5f7 0%, #fff 100%);
+    border-radius: 30px;
+    border: 2px dashed var(--primary-pink);
+}
+
+.contact-highlight h4 {
+    color: var(--deep-pink);
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.twitter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #000;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+    margin-top: 1rem;
+}
+
+.twitter-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .step-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .step-icon-box {
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.6rem;
+    }
+}
