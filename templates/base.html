@@ -145,54 +145,13 @@
             
             body { padding-bottom: 72px !important; }
             
-            /* Mobile User Badge (Top Left) - FORCED DESKTOP STYLE */
+            /* Mobile User Badge (Top Left) - FIXED POSITION ONLY */
             .mobile-user-badge {
                 position: fixed !important;
                 top: 12px !important;
                 left: 12px !important;
-                z-index: 6000 !important;
+                z-index: 9999 !important; /* Higher z-index */
                 display: block !important;
-            }
-            .mobile-user-badge .user-nav-frame {
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                gap: 6px !important;
-                padding: 4px 12px !important;
-                border-radius: 30px !important;
-                text-decoration: none !important;
-                transition: 0.3s !important;
-                line-height: 1.2 !important;
-                vertical-align: middle !important;
-                transform: scale(0.9) !important;
-                transform-origin: top left !important;
-                
-                /* ยกสไตล์สีและแสงเรืองแสงมาบังคับใช้ในมือถือ */
-                background-size: 200% 200% !important;
-                position: relative !important;
-                overflow: hidden !important;
-            }
-            
-            /* บังคับสีตามยศในมือถือ */
-            .mobile-user-badge .frame-miru { background: linear-gradient(135deg, #a8e063, #56ab2f, #228B22) !important; box-shadow: 0 0 15px rgba(86, 171, 47, 0.5) !important; border-color: #d4fc79 !important; }
-            .mobile-user-badge .frame-focus { background: linear-gradient(135deg, #ff416c, #ff4b2b, #8b0000) !important; box-shadow: 0 0 15px rgba(255, 65, 108, 0.5) !important; border-color: #ff9a9e !important; }
-            .mobile-user-badge .frame-developer { background: linear-gradient(135deg, #ff758c, #ffadb9, #c71585) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.5) !important; border-color: #ffd1dc !important; }
-            .mobile-user-badge .frame-member { background: linear-gradient(135deg, #4facfe, #00f2fe, #00008b) !important; box-shadow: 0 0 15px rgba(79, 172, 254, 0.5) !important; border-color: #a1c4fd !important; }
-            .mobile-user-badge .frame-assistant { background: linear-gradient(135deg, #8e44ad, #9b59b6, #4b0082) !important; box-shadow: 0 0 15px rgba(142, 68, 173, 0.5) !important; border-color: #e0b0ff !important; }
-            
-            .mobile-user-badge .user-nav-frame img {
-                width: 24px !important;
-                height: 24px !important;
-                border-radius: 50% !important;
-                background: #fff !important;
-                display: block !important;
-                object-fit: cover !important;
-            }
-            .mobile-user-badge .user-name-glow {
-                color: #fff !important;
-                text-shadow: 0 0 8px rgba(255, 255, 255, 0.5) !important;
-                font-weight: 700 !important;
-                font-size: 0.85rem !important;
             }
         }
         
@@ -219,12 +178,12 @@
                 {% elif current_user.role == 'admin_assistant' %}frame-assistant
                 {% elif current_user.role == 'developer' %}frame-developer
                 {% elif current_user.role == 'member' %}frame-member{% endif %}"
-            style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; padding: 5px 15px !important; border-radius: 30px !important; text-decoration: none !important; transition: 0.3s !important; line-height: 1.2 !important; vertical-align: middle !important; transform: scale(0.9); transform-origin: top left;
-                {% if current_user.role == 'developer' %}background: linear-gradient(135deg, #ff758c, #ffadb9, #c71585) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.5) !important; border: 1px solid #ffd1dc !important;
-                {% elif current_user.role == 'admin_miru' %}background: linear-gradient(135deg, #a8e063, #56ab2f, #228B22) !important; box-shadow: 0 0 15px rgba(86, 171, 47, 0.5) !important; border: 1px solid #d4fc79 !important;
-                {% elif current_user.role == 'admin_focus' %}background: linear-gradient(135deg, #ff416c, #ff4b2b, #8b0000) !important; box-shadow: 0 0 15px rgba(255, 65, 108, 0.5) !important; border: 1px solid #ff9a9e !important;
-                {% elif current_user.role == 'member' %}background: linear-gradient(135deg, #4facfe, #00f2fe, #00008b) !important; box-shadow: 0 0 15px rgba(79, 172, 254, 0.5) !important; border: 1px solid #a1c4fd !important;
-                {% else %}background: linear-gradient(135deg, #ff4d8d, #ffb6c1, #e01e5a) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.6) !important; border: 1px solid #ffd1dc !important;{% endif %}">
+            style="display: inline-flex !important; align-items: center !important; justify-content: flex-start !important; gap: 10px !important; padding: 6px 18px !important; border-radius: 40px !important; text-decoration: none !important; transition: 0.3s !important; line-height: 1.2 !important; vertical-align: middle !important; transform: scale(0.9); transform-origin: top left; min-width: 120px !important;
+                {% if current_user.role == 'developer' %}background: linear-gradient(135deg, #ff758c, #ffadb9, #c71585) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.5) !important; border: 1.5px solid #ffd1dc !important;
+                {% elif current_user.role == 'admin_miru' %}background: linear-gradient(135deg, #a8e063, #56ab2f, #228B22) !important; box-shadow: 0 0 15px rgba(86, 171, 47, 0.5) !important; border: 1.5px solid #d4fc79 !important;
+                {% elif current_user.role == 'admin_focus' %}background: linear-gradient(135deg, #ff416c, #ff4b2b, #8b0000) !important; box-shadow: 0 0 15px rgba(255, 65, 108, 0.5) !important; border: 1.5px solid #ff9a9e !important;
+                {% elif current_user.role == 'member' %}background: linear-gradient(135deg, #4facfe, #00f2fe, #00008b) !important; box-shadow: 0 0 15px rgba(79, 172, 254, 0.5) !important; border: 1.5px solid #a1c4fd !important;
+                {% else %}background: linear-gradient(135deg, #ff4d8d, #ffb6c1, #e01e5a) !important; box-shadow: 0 0 20px rgba(255, 117, 140, 0.6) !important; border: 1.5px solid #ffd1dc !important;{% endif %}">
             
             <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
                 alt="Profile"
