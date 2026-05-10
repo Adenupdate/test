@@ -40,8 +40,33 @@
 
             {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('my_bookings') }}" class="nav-btn"><span class="nav-text">ของฉัน</span></a></li>
-            <li><a href="#" onclick="openProfileModal(); return false;" class="nav-btn user-nav-btn"><span
-                        class="nav-text">โปรไฟล์</span></a></li>
+            
+            <!-- 🎖️ Profile with Rank Badge & Frame -->
+            <li class="user-nav-frame frame-{{ current_user.role if current_user.role else 'user' }}" style="list-style: none; border-radius: 15px; margin: 0 5px;">
+                <a href="#" onclick="openProfileModal(); return false;" class="nav-btn user-nav-btn" style="padding: 6px 15px; display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" 
+                         style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                        <span class="user-name-glow" style="font-size: 0.9rem; font-weight: 800;">{{ current_user.username }}</span>
+                        {% if current_user.role == 'developer' %}
+                            <span class="rank-badge badge-developer" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">DEVELOPERS</span>
+                        {% elif current_user.role == 'admin_miru' %}
+                            <span class="rank-badge badge-admin-miru" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">ADMIN MIRU</span>
+                        {% elif current_user.role == 'admin_focus' %}
+                            <span class="rank-badge badge-admin-focus" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">ADMIN FOCUS</span>
+                        {% elif current_user.role == 'admin_assistant' %}
+                            <span class="rank-badge badge-admin-assistant" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">ASSISTANT</span>
+                        {% elif current_user.role == 'admin' %}
+                            <span class="rank-badge badge-admin" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">ADMIN</span>
+                        {% elif current_user.role == 'member' %}
+                            <span class="rank-badge badge-member" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">MEMBER</span>
+                        {% else %}
+                            <span class="rank-badge badge-user" style="font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 800;">USER</span>
+                        {% endif %}
+                    </div>
+                </a>
+            </li>
+
             <li><a href="{{ url_for('logout') }}" class="nav-btn logout-btn"><span class="nav-text">ออกระบบ</span></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}" class="nav-btn"><span class="nav-text">เข้าสู่ระบบ</span></a></li>
