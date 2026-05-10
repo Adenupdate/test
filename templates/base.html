@@ -145,33 +145,20 @@
             
             body { padding-bottom: 72px !important; }
             
-            /* Mobile User Badge (Top Left) */
+            /* Mobile User Badge (Top Left) - Replicated from Desktop */
             .mobile-user-badge {
                 position: fixed !important;
                 top: 15px !important;
                 left: 15px !important;
                 z-index: 6000 !important;
                 display: block !important;
+                background: none !important; /* Allow original frame background */
             }
             .mobile-user-badge .user-nav-frame {
-                background: linear-gradient(135deg, rgba(255, 117, 140, 0.9) 0%, rgba(255, 77, 115, 0.9) 100%) !important;
-                box-shadow: 0 4px 15px rgba(255, 77, 115, 0.3) !important;
-                border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-                padding: 5px 12px !important;
-                display: flex !important;
-                align-items: center !important;
-                gap: 8px !important;
-            }
-            .mobile-user-badge .user-nav-frame img {
-                width: 28px !important;
-                height: 28px !important;
-                border: 1.5px solid #fff !important;
-            }
-            .mobile-user-badge .user-nav-frame span {
-                color: #fff !important;
-                font-size: 0.85rem !important;
-                font-weight: 800 !important;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                /* Inherit everything from original style, just adjust scale if needed */
+                transform: scale(0.9) !important;
+                transform-origin: top left !important;
+                margin: 0 !important;
             }
         }
         
@@ -189,20 +176,33 @@
 <body>
 
     {% if current_user.is_authenticated %}
-    <!-- Mobile User Badge (Only on Mobile) -->
+    <!-- Mobile User Badge (Only on Mobile) - EXACT SAME AS DESKTOP -->
     <div class="mobile-user-badge">
-        <a href="#" onclick="openProfileModal(); return false;" class="user-nav-frame">
-            <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" alt="Profile">
-            <span>{{ current_user.nickname or current_user.username }}</span>
-            <span class="rank-badge 
-                {% if current_user.role == 'developer' %}badge-developer
-                {% elif current_user.role == 'admin_miru' %}badge-admin-miru
-                {% elif current_user.role == 'admin_focus' %}badge-admin-focus
-                {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
-                {% elif current_user.role == 'admin' %}badge-admin
-                {% elif current_user.role == 'member' %}badge-member{% endif %}"
-                style="font-size: 0.6rem; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.2); color: #fff;">
-                {% if current_user.role == 'admin' %}ADMIN{% elif current_user.role == 'developer' %}DEV{% else %}{{ current_user.role | upper }}{% endif %}
+        <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
+                        {% if current_user.role == 'admin_miru' %}frame-miru
+                        {% elif current_user.role == 'admin_focus' %}frame-focus
+                        {% elif current_user.role == 'admin_assistant' %}frame-assistant
+                        {% elif current_user.role == 'developer' %}frame-developer
+                        {% elif current_user.role == 'member' %}frame-member{% endif %}"
+            style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px; border-radius: 30px; text-decoration: none; transition: 0.3s; line-height: 1.2; vertical-align: middle;">
+            <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
+                alt="Profile"
+                style="width: 24px; height: 24px; border-radius: 50%; background: #fff; display: block; object-fit: cover;">
+            <span class="user-name-glow"
+                style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left; color: white;">
+                {{ current_user.nickname or current_user.username }}
+                {% if current_user.role != 'user' %}
+                <span class="rank-badge 
+                        {% if current_user.role == 'developer' %}badge-developer
+                        {% elif current_user.role == 'admin_miru' %}badge-admin-miru
+                        {% elif current_user.role == 'admin_focus' %}badge-admin-focus
+                        {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
+                        {% elif current_user.role == 'admin' %}badge-admin
+                        {% elif current_user.role == 'member' %}badge-member{% endif %}"
+                    style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
+                    {% if current_user.role == 'admin' %}ADMIN{% elif current_user.role == 'developer' %}DEV{% else %}{{ current_user.role | upper }}{% endif %}
+                </span>
+                {% endif %}
             </span>
         </a>
     </div>
