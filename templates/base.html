@@ -210,17 +210,27 @@
 <body>
 
     {% if current_user.is_authenticated %}
-    <!-- Mobile User Badge (Top Left) - FULL PINK FRAME FORCED -->
+    <!-- Mobile User Badge (Top Left) - FORCED INLINE STYLE TO MATCH DESKTOP -->
     <div class="mobile-user-badge">
-        <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
-                        {% if current_user.role == 'admin_miru' %}frame-miru
-                        {% elif current_user.role == 'admin_focus' %}frame-focus
-                        {% elif current_user.role == 'admin_assistant' %}frame-assistant
-                        {% elif current_user.role == 'developer' %}frame-developer
-                        {% elif current_user.role == 'member' %}frame-member{% endif %}">
+        <a href="#" onclick="openProfileModal(); return false;" title="My Profile" 
+            class="user-nav-frame 
+                {% if current_user.role == 'admin_miru' %}frame-miru
+                {% elif current_user.role == 'admin_focus' %}frame-focus
+                {% elif current_user.role == 'admin_assistant' %}frame-assistant
+                {% elif current_user.role == 'developer' %}frame-developer
+                {% elif current_user.role == 'member' %}frame-member{% endif %}"
+            style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; padding: 5px 15px !important; border-radius: 30px !important; text-decoration: none !important; transition: 0.3s !important; line-height: 1.2 !important; vertical-align: middle !important; transform: scale(0.9); transform-origin: top left;
+                {% if current_user.role == 'developer' %}background: linear-gradient(135deg, #ff758c, #ffadb9, #c71585) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.5) !important; border: 1px solid #ffd1dc !important;
+                {% elif current_user.role == 'admin_miru' %}background: linear-gradient(135deg, #a8e063, #56ab2f, #228B22) !important; box-shadow: 0 0 15px rgba(86, 171, 47, 0.5) !important; border: 1px solid #d4fc79 !important;
+                {% elif current_user.role == 'admin_focus' %}background: linear-gradient(135deg, #ff416c, #ff4b2b, #8b0000) !important; box-shadow: 0 0 15px rgba(255, 65, 108, 0.5) !important; border: 1px solid #ff9a9e !important;
+                {% elif current_user.role == 'member' %}background: linear-gradient(135deg, #4facfe, #00f2fe, #00008b) !important; box-shadow: 0 0 15px rgba(79, 172, 254, 0.5) !important; border: 1px solid #a1c4fd !important;
+                {% else %}background: linear-gradient(135deg, #ff4d8d, #ffb6c1, #e01e5a) !important; box-shadow: 0 0 15px rgba(255, 117, 140, 0.6) !important; border: 1px solid #ffd1dc !important;{% endif %}">
+            
             <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
-                alt="Profile">
-            <span class="user-name-glow">
+                alt="Profile"
+                style="width: 26px !important; height: 26px !important; border-radius: 50% !important; background: #fff !important; display: block !important; object-fit: cover !important; border: 1.5px solid rgba(255,255,255,0.4) !important;">
+            
+            <span class="user-name-glow" style="color: #fff !important; text-shadow: 0 0 8px rgba(255, 255, 255, 0.5) !important; font-weight: 700 !important; font-size: 0.9rem !important; display: block !important;">
                 {{ current_user.nickname or current_user.username }}
                 {% if current_user.role != 'user' %}
                 <span class="rank-badge 
@@ -229,14 +239,9 @@
                         {% elif current_user.role == 'admin_focus' %}badge-admin-focus
                         {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
                         {% elif current_user.role == 'admin' %}badge-admin
-                        {% elif current_user.role == 'member' %}badge-member{% endif %}">
-                    {% if current_user.role == 'developer' %}
-                    <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
-                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="16 18 22 12 16 6"></polyline>
-                        <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                    DEV
+                        {% elif current_user.role == 'member' %}badge-member{% endif %}"
+                    style="font-size: 0.65rem !important; padding: 2px 8px !important; margin-left: 5px !important; vertical-align: middle !important; display: inline-flex !important; align-items: center !important; gap: 3px !important; height: 20px !important; border-radius: 8px !important; background: rgba(0,0,0,0.2) !important; border: 1px solid rgba(255,255,255,0.3) !important; color: #fff !important;">
+                    {% if current_user.role == 'developer' %}DEV
                     {% elif current_user.role == 'admin_miru' %}MIRU
                     {% elif current_user.role == 'admin_focus' %}FOCUS
                     {% elif current_user.role == 'admin_assistant' %}AST
