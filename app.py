@@ -853,7 +853,28 @@ def migrate():
     except Exception as e:
         results.append(f"ERROR SETTINGS: {e}")
 
-    return "<h3>Migration Done</h3><ul><li>" + "</li><li>".join(results) + "</li></ul>"
+    # Reset/Ensure Admin Account
+    try:
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            from werkzeug.security import generate_password_hash
+            hashed_pw = generate_password_hash('123', method='pbkdf2:sha256')
+            admin = User(username='admin', password=hashed_pw, is_admin=True, role='admin')
+            db.session.add(admin)
+            results.append("CREATED: Admin account (admin/123)")
+        else:
+            from werkzeug.security import generate_password_hash
+            admin.password = generate_password_hash('123', method='pbkdf2:sha256')
+            admin.is_admin = True
+            if not admin.role or admin.role == 'user':
+                admin.role = 'admin'
+            results.append("RESET: Admin password to 123")
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        results.append(f"ERROR ADMIN: {e}")
+
+    return "<h3>Migration & Admin Reset Done</h3><ul><li>" + "</li><li>".join(results) + "</li></ul>"
 
 @app.route('/my-bookings')
 @login_required
