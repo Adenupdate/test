@@ -98,7 +98,10 @@ class SystemSetting(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    try:
+        return User.query.get(int(user_id))
+    except Exception:
+        return None
 
 # Routes
 @app.before_request
@@ -862,6 +865,41 @@ with app.app_context():
     try:
         db.create_all()
         print("Database initialized successfully!")
+        # Auto-migrate: add missing columns if they don't exist
+        from sqlalchemy import text, inspect
+        inspector = inspect(db.engine)
+        columns_to_add = [
+            ('user', 'is_banned', "BOOLEAN DEFAULT FALSE"),
+            ('user', 'role', "VARCHAR(50) DEFAULT 'user'"),
+            ('user', 'profile_image', "VARCHAR(500) DEFAULT 'images/profile_default.jpg'"),
+            ('user', 'nickname', "VARCHAR(150)"),
+            ('user', 'status_text', "VARCHAR(500)"),
+            ('ticket_form', 'status', "VARCHAR(20) DEFAULT 'Pending'"),
+            ('ticket_form', 'note', "VARCHAR(1000)"),
+            ('ticket_form', 'ticketing_platform', "VARCHAR(500)"),
+            ('concert', 'status_badge', "VARCHAR(50) DEFAULT 'none'"),
+            ('concert', 'is_open', "BOOLEAN DEFAULT TRUE"),
+            ('ticket_form', 'created_at', "TIMESTAMP"),
+            ('ticket_form', 'ticket_quantity', "VARCHAR(500) DEFAULT '1'")
+        ]
+        for table, col, defn in columns_to_add:
+            try:
+                existing_cols = [c['name'] for c in inspector.get_columns(table)]
+                if col not in existing_cols:
+                    db.session.execute(text(f'ALTER TABLE "{table}" ADD COLUMN {col} {defn}'))
+                    db.session.commit()
+                    print(f"Auto-migrated: Added {col} to {table}")
+            except Exception as me:
+                db.session.rollback()
+                print(f"Auto-migrate skip {col} in {table}: {me}")
+        # Initialize default settings
+        for key, val in [('maintenance_mode', 'False'), ('announcement', '')]:
+            try:
+                if not SystemSetting.query.filter_by(key=key).first():
+                    db.session.add(SystemSetting(key=key, value=val))
+                    db.session.commit()
+            except Exception:
+                db.session.rollback()
     except Exception as e:
         print(f"Error during database initialization: {str(e)}")
 
