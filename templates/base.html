@@ -6,6 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aden_ticket | Ticket Booking</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1000, 9999)|random }}">
+    
+    <style>
+        /* บังคับขนาด UI ให้จิ๋วและพอดี (Forced Compact UI) */
+        .auth-card, .form-modal {
+            max-width: 320px !important; /* บังคับขนาดไม่เกิน 320px */
+            width: 90% !important;
+            margin: auto !important;
+            padding: 1.5rem !important;
+            border-radius: 28px !important;
+            box-shadow: 0 15px 40px rgba(255, 182, 193, 0.25) !important;
+        }
+        
+        /* ปรับปรุงหน้าตา Input ให้ดูแพงขึ้น */
+        .form-group input, .form-group select {
+            border-radius: 12px !important;
+            padding: 10px 15px !important;
+            font-size: 0.95rem !important;
+            border: 1.5px solid #eee !important;
+            background: #fdfdfd !important;
+        }
+
+        .submit-btn {
+            padding: 12px !important;
+            border-radius: 15px !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+        }
+
+        @media (max-width: 768px) {
+            .overlay { padding-top: 10vh !important; }
+            .form-modal { margin-top: 0 !important; }
+        }
+    </style>
 </head>
 
 <body>
