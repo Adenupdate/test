@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aden_ticket | Ticket Booking</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1000, 9999)|random }}">
 </head>
 
 <body>
@@ -295,46 +295,54 @@
             color: #ef4444;
         }
 
-        /* Improved Mobile Navigation for widths <= 1024px */
+        /* 📱 ULTRA PREMIUM MOBILE NAVIGATION (FORCED) */
         @media (max-width: 1024px) {
-            .nav-text {
-                display: none !important;
-            }
-
-            /* Make logout text visible if it helps */
-            .logout-btn .nav-text {
-                display: none !important; 
-            }
+            .nav-text { display: none !important; }
+            
+            /* Hide logo on top if needed, or keep it */
+            .brand-name { font-size: 1.3rem !important; }
+            .brand-logo { width: 32px !important; height: 32px !important; }
 
             .nav-links {
                 position: fixed !important;
-                bottom: 20px !important;
+                bottom: 15px !important;
+                top: auto !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
+                display: flex !important;
+                flex-direction: row !important;
+                width: 94% !important;
+                max-width: 480px !important;
                 background: rgba(255, 255, 255, 0.95) !important;
                 backdrop-filter: blur(20px) !important;
                 -webkit-backdrop-filter: blur(20px) !important;
-                border: 2px solid var(--primary-pink) !important;
-                padding: 10px 15px !important;
-                border-radius: 50px !important;
-                box-shadow: 0 15px 40px rgba(255, 117, 140, 0.3) !important;
-                margin: 0 !important;
-                list-style: none !important;
-                z-index: 10000 !important;
-                display: flex !important;
-                gap: 5px !important;
-                width: 94% !important;
-                max-width: 500px !important;
+                border: 2px solid #ffadb9 !important;
+                border-radius: 40px !important;
+                padding: 8px 12px !important;
+                box-shadow: 0 10px 40px rgba(255, 117, 140, 0.3) !important;
+                z-index: 999999 !important; /* Extremely high z-index */
                 justify-content: space-around !important;
                 align-items: center !important;
+                margin: 0 !important;
+                gap: 5px !important;
+            }
+
+            .nav-links li {
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .nav-btn {
                 padding: 10px !important;
-                gap: 0 !important;
                 border-radius: 50% !important;
-                aspect-ratio: 1/1;
-                justify-content: center;
+                background: transparent !important;
+                color: #ff758c !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 45px !important;
+                height: 45px !important;
             }
 
             .nav-btn svg {
@@ -342,34 +350,26 @@
                 height: 24px !important;
             }
 
+            .logout-btn {
+                color: #ff4d4d !important;
+                background: #fff0f0 !important;
+            }
+
+            /* Hide profile details on mobile to save space */
             .user-nav-frame {
-                padding: 5px !important;
+                width: 45px !important;
+                height: 45px !important;
+                padding: 4px !important;
                 border-radius: 50% !important;
-                width: 44px;
-                height: 44px;
                 gap: 0 !important;
+                justify-content: center !important;
             }
-
-            .user-nav-frame img {
-                width: 30px !important;
-                height: 30px !important;
-            }
-
-            .user-name-glow, .rank-badge, .user-nav-frame div[style*="font-size: 0.65rem"] {
+            .user-name-glow, .rank-badge, .user-nav-frame div {
                 display: none !important;
             }
 
-            nav {
-                padding: 1rem 5% !important;
-                justify-content: center !important;
-            }
-            
-            .brand-name {
-                font-size: 1.5rem !important;
-            }
-
             body {
-                padding-bottom: 100px !important;
+                padding-bottom: 90px !important; /* Ensure content isn't hidden */
             }
         }
 
@@ -648,6 +648,25 @@
             {% endif %}
             {% endwith %}
         });
+    </script>
+    <script>
+        /* Force Mobile Menu to Bottom JS Fallback */
+        function forceMobileNav() {
+            if (window.innerWidth <= 1024) {
+                const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    navLinks.style.position = 'fixed';
+                    navLinks.style.bottom = '15px';
+                    navLinks.style.left = '50%';
+                    navLinks.style.transform = 'translateX(-50%)';
+                    navLinks.style.zIndex = '999999';
+                    navLinks.style.display = 'flex';
+                }
+                document.body.style.paddingBottom = '100px';
+            }
+        }
+        window.addEventListener('load', forceMobileNav);
+        window.addEventListener('resize', forceMobileNav);
     </script>
 </body>
 
