@@ -9,11 +9,6 @@
 </head>
 
 <body>
-    <!-- DEBUG BANNER - REMOVE AFTER VERIFICATION -->
-    <div
-        style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999999;">
-        DEBUG: TEMPLATE UPDATED {{ range(100, 999)|random }}
-    </div>
 
     {% if announcement %}
     <div class="announcement-banner">
@@ -321,25 +316,26 @@
                 position: fixed !important;
                 bottom: 15px !important;
                 top: auto !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
+                left: 5% !important;
+                right: 5% !important;
+                transform: none !important;
                 display: flex !important;
                 flex-direction: row !important;
-                width: 94% !important;
-                max-width: 480px !important;
-                background: rgba(255, 255, 255, 0.95) !important;
+                width: 90% !important;
+                max-width: none !important;
+                background: rgba(255, 255, 255, 0.98) !important;
                 backdrop-filter: blur(20px) !important;
                 -webkit-backdrop-filter: blur(20px) !important;
-                border: 2px solid #ffadb9 !important;
-                border-radius: 40px !important;
-                padding: 8px 12px !important;
-                box-shadow: 0 10px 40px rgba(255, 117, 140, 0.3) !important;
-                z-index: 999999 !important;
-                /* Extremely high z-index */
+                border: 2px solid #ff758c !important;
+                border-radius: 50px !important;
+                padding: 10px !important;
+                box-shadow: 0 -5px 30px rgba(255, 117, 140, 0.4) !important;
+                z-index: 2147483647 !important; /* Max possible z-index */
                 justify-content: space-around !important;
                 align-items: center !important;
-                margin: 0 !important;
+                margin: 0 auto !important;
                 gap: 5px !important;
+                list-style: none !important;
             }
 
             .nav-links li {
@@ -669,23 +665,52 @@
         });
     </script>
     <script>
-        /* Force Mobile Menu to Bottom JS Fallback */
-        function forceMobileNav() {
-            if (window.innerWidth <= 1024) {
-                const navLinks = document.querySelector('.nav-links');
-                if (navLinks) {
-                    navLinks.style.position = 'fixed';
-                    navLinks.style.bottom = '15px';
-                    navLinks.style.left = '50%';
-                    navLinks.style.transform = 'translateX(-50%)';
-                    navLinks.style.zIndex = '999999';
-                    navLinks.style.display = 'flex';
+        /* Force Mobile Menu to Bottom - The Ultimate Fix */
+        function applyMobileNav() {
+            const isMobile = window.innerWidth <= 1024;
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (isMobile && navLinks) {
+                // Move to end of body to avoid any parent clipping
+                if (navLinks.parentElement !== document.body) {
+                    document.body.appendChild(navLinks);
                 }
+                
+                // Force styles via JS to be sure
+                Object.assign(navLinks.style, {
+                    position: 'fixed',
+                    bottom: '15px',
+                    left: '5%',
+                    right: '5%',
+                    width: '90%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    zIndex: '2147483647',
+                    background: 'rgba(255, 255, 255, 0.98)',
+                    padding: '10px',
+                    borderRadius: '50px',
+                    border: '2px solid #ff758c',
+                    boxShadow: '0 -5px 30px rgba(255, 117, 140, 0.4)',
+                    listStyle: 'none',
+                    margin: '0 auto'
+                });
+                
                 document.body.style.paddingBottom = '100px';
+            } else if (!isMobile && navLinks) {
+                // On desktop, if we moved it, move it back (or just refresh)
+                const nav = document.querySelector('nav');
+                if (nav && navLinks.parentElement === document.body) {
+                    nav.appendChild(navLinks);
+                    navLinks.style = ''; // Clear forced styles
+                }
             }
         }
-        window.addEventListener('load', forceMobileNav);
-        window.addEventListener('resize', forceMobileNav);
+
+        window.addEventListener('load', applyMobileNav);
+        window.addEventListener('resize', applyMobileNav);
+        // Also run every 1 second for a few times just in case of slow rendering
+        for(let i=1; i<=3; i++) setTimeout(applyMobileNav, i*1000);
     </script>
 </body>
 
