@@ -713,10 +713,12 @@ nav {
     background: var(--deep-pink);
 }
 /* Responsive Adjustments */
+@media (max-width: 1024px) {
     /* Mobile navigation handled in base.html */
     nav {
-        padding: 1rem 5%;
+        padding: 1rem 5% !important;
     }
+}
 
     /* Hero Section Mobile */
     .hero {
