@@ -176,7 +176,7 @@
 <body>
 
     {% if current_user.is_authenticated %}
-    <!-- Mobile User Badge (Only on Mobile) - EXACT SAME AS DESKTOP -->
+    <!-- Mobile User Badge (Top Left) - EXACT REPLICA OF DESKTOP -->
     <div class="mobile-user-badge">
         <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
                         {% if current_user.role == 'admin_miru' %}frame-miru
@@ -189,7 +189,7 @@
                 alt="Profile"
                 style="width: 24px; height: 24px; border-radius: 50%; background: #fff; display: block; object-fit: cover;">
             <span class="user-name-glow"
-                style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left; color: white;">
+                style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left;">
                 {{ current_user.nickname or current_user.username }}
                 {% if current_user.role != 'user' %}
                 <span class="rank-badge 
@@ -200,7 +200,19 @@
                         {% elif current_user.role == 'admin' %}badge-admin
                         {% elif current_user.role == 'member' %}badge-member{% endif %}"
                     style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
-                    {% if current_user.role == 'admin' %}ADMIN{% elif current_user.role == 'developer' %}DEV{% else %}{{ current_user.role | upper }}{% endif %}
+                    {% if current_user.role == 'developer' %}
+                    <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
+                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    DEV
+                    {% elif current_user.role == 'admin_miru' %}MIRU
+                    {% elif current_user.role == 'admin_focus' %}FOCUS
+                    {% elif current_user.role == 'admin_assistant' %}AST
+                    {% elif current_user.role == 'admin' %}ADMIN
+                    {% elif current_user.role == 'admin_focus' %}MOD
+                    {% elif current_user.role == 'member' %}VIP{% endif %}
                 </span>
                 {% endif %}
             </span>
