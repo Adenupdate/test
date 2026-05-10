@@ -5,10 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aden_ticket | Ticket Booking</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1000, 9999)|random }}">
 </head>
 
 <body>
+    <!-- DEBUG BANNER - REMOVE AFTER VERIFICATION -->
+    <div
+        style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999999;">
+        DEBUG: TEMPLATE UPDATED {{ range(100, 999)|random }}
+    </div>
+
     {% if announcement %}
     <div class="announcement-banner">
         <div class="banner-content">
@@ -80,8 +86,7 @@
             </li>
             {% endif %}
             <li>
-                <a href="#" onclick="openProfileModal(); return false;" title="My Profile"
-                    class="user-nav-frame 
+                <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
                                 {% if current_user.role == 'admin_miru' %}frame-miru
                                 {% elif current_user.role == 'admin_focus' %}frame-focus
                                 {% elif current_user.role == 'admin_assistant' %}frame-assistant
@@ -102,10 +107,12 @@
                                 {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
                                 {% elif current_user.role == 'admin' %}badge-admin
                                 {% elif current_user.role == 'member' %}badge-member{% endif %}"
-                              style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
+                            style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
                             {% if current_user.role == 'developer' %}
-                            <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
+                            <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
                             </svg>
                             DEV
                             {% elif current_user.role == 'admin_miru' %}MIRU
@@ -116,8 +123,7 @@
                         </span>
                         {% endif %}
                         {% if current_user.status_text %}
-                        <div
-                            style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9;">
+                        <div style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9;">
                             {{ current_user.status_text }}</div>
                         {% endif %}
 
@@ -295,81 +301,104 @@
             color: #ef4444;
         }
 
-        @media (max-width: 800px) {
+        /* 📱 ULTRA PREMIUM MOBILE NAVIGATION (FORCED) */
+        @media (max-width: 1024px) {
             .nav-text {
-                display: none;
+                display: none !important;
+            }
+
+            /* Hide logo on top if needed, or keep it */
+            .brand-name {
+                font-size: 1.3rem !important;
+            }
+
+            .brand-logo {
+                width: 32px !important;
+                height: 32px !important;
             }
 
             .nav-links {
-                gap: 4px !important;
-                border-radius: 20px;
-                padding: 6px;
+                position: fixed !important;
+                bottom: 15px !important;
+                top: auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                display: flex !important;
+                flex-direction: row !important;
+                width: 94% !important;
+                max-width: 480px !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border: 2px solid #ffadb9 !important;
+                border-radius: 40px !important;
+                padding: 8px 12px !important;
+                box-shadow: 0 10px 40px rgba(255, 117, 140, 0.3) !important;
+                z-index: 999999 !important;
+                /* Extremely high z-index */
+                justify-content: space-around !important;
+                align-items: center !important;
+                margin: 0 !important;
+                gap: 5px !important;
             }
 
-            .nav-links li a svg {
-                width: 22px;
-                height: 22px;
-            }
-
-            /* Hide 'Panel' or 'Users' text completely to save space */
-            .user-nav-frame {
-                padding: 4px 10px !important;
-            }
-
-            .default-nav-frame {
-                padding: 4px 10px !important;
+            .nav-links li {
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .nav-btn {
-                padding: 8px 12px;
+                padding: 10px !important;
+                border-radius: 50% !important;
+                background: transparent !important;
+                color: #ff758c !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 45px !important;
+                height: 45px !important;
             }
 
-            nav {
-                justify-content: space-between !important;
-                flex-direction: row !important;
+            .nav-btn svg {
+                width: 24px !important;
+                height: 24px !important;
             }
 
-            .nav-links {
-                position: relative !important;
-                left: 0 !important;
-                transform: none !important;
-                flex-wrap: nowrap;
-                width: auto;
+            .logout-btn {
+                color: #ff4d4d !important;
+                background: #fff0f0 !important;
             }
-            
-            .brand-name {
-                font-size: 1.4rem;
+
+            /* Hide profile details on mobile to save space */
+            .user-nav-frame {
+                width: 45px !important;
+                height: 45px !important;
+                padding: 4px !important;
+                border-radius: 50% !important;
+                gap: 0 !important;
+                justify-content: center !important;
+            }
+
+            .user-name-glow,
+            .rank-badge,
+            .user-nav-frame div {
+                display: none !important;
+            }
+
+            body {
+                padding-bottom: 90px !important;
+                /* Ensure content isn't hidden */
             }
         }
-        
-        @media (max-width: 480px) {
-            .nav-links {
-                position: fixed !important;
-                bottom: 20px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 117, 140, 0.3);
-                box-shadow: 0 10px 30px rgba(255, 117, 140, 0.2);
-                z-index: 9999;
-                padding: 8px 12px;
-                border-radius: 40px;
-                width: 90%;
-                justify-content: space-around;
-            }
-            nav {
-                padding-bottom: 1rem !important; /* Adjust if bottom nav is active */
-            }
-        }
-
     </style>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <div style="text-align: center; padding: 2rem 0 120px; color: #8c7373; font-size: 0.9rem; font-family: 'Prompt', sans-serif; opacity: 0.7;">
+    <div
+        style="text-align: center; padding: 2rem 0 120px; color: #8c7373; font-size: 0.9rem; font-family: 'Prompt', sans-serif; opacity: 0.7;">
         <p>&copy; 2026 Aden ticket. All rights reserved.</p>
     </div>
 
@@ -638,6 +667,25 @@
             {% endif %}
             {% endwith %}
         });
+    </script>
+    <script>
+        /* Force Mobile Menu to Bottom JS Fallback */
+        function forceMobileNav() {
+            if (window.innerWidth <= 1024) {
+                const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    navLinks.style.position = 'fixed';
+                    navLinks.style.bottom = '15px';
+                    navLinks.style.left = '50%';
+                    navLinks.style.transform = 'translateX(-50%)';
+                    navLinks.style.zIndex = '999999';
+                    navLinks.style.display = 'flex';
+                }
+                document.body.style.paddingBottom = '100px';
+            }
+        }
+        window.addEventListener('load', forceMobileNav);
+        window.addEventListener('resize', forceMobileNav);
     </script>
 </body>
 
