@@ -80,15 +80,15 @@ nav {
 }
 
 .brand-name {
-    font-size: 2.2rem;
+    font-size: 1.4rem; /* Reduced from 2.2rem */
     font-weight: 700;
     color: var(--light-red);
     text-decoration: none;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    text-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+    gap: 10px;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.15);
 }
 
 .brand-logo {
@@ -132,7 +132,7 @@ nav {
 }
 
 .hero h1 {
-    font-size: 3.8rem;
+    font-size: 4.5rem; /* Increased from 3.8rem */
     margin-bottom: 1.5rem;
     color: var(--light-red);
     text-shadow: 0 0 30px rgba(255, 107, 107, 0.4);
@@ -400,17 +400,15 @@ nav {
 }
 
 .form-modal {
-    background: #fff;
-    width: 94%;
-    max-width: 580px;
-    padding: 2rem 2.2rem;
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    background: #ffffff;
+    width: 90%;
+    max-width: 330px;
+    padding: 1.5rem;
+    border-radius: 28px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.12);
     position: relative;
-    margin-bottom: 4vh;
-    /* GPU acceleration for smooth rendering */
-    transform: translateZ(0);
-    will-change: transform;
+    margin: auto;
+    border: 1px solid rgba(255, 192, 203, 0.3);
 }
 
 
@@ -656,13 +654,15 @@ nav {
 }
 
 .auth-card {
-    background: var(--pure-white);
-    padding: 1.2rem 1.8rem; /* Even less padding */
-    border-radius: 24px;
-    box-shadow: var(--shadow);
+    background: #ffffff;
+    padding: 2rem 1.8rem;
+    border-radius: 32px;
+    box-shadow: 0 20px 50px rgba(255, 182, 193, 0.25);
     width: 90%;
-    max-width: 320px;      /* Further reduced to 320px */
+    max-width: 320px;
     margin: 0 auto;
+    border: 1.5px solid var(--soft-pink);
+    animation: fadeIn 0.8s ease-out;
 }
 
 .auth-card h2 {
@@ -788,11 +788,10 @@ nav {
 
     /* Modal Mobile */
     .form-modal {
-        padding: 1.5rem 1rem;
-        width: 92%;
-        margin-left: auto;
-        margin-right: auto;
-        max-width: calc(100% - 20px) !important;
+        padding: 1.5rem;
+        width: 90%;
+        max-width: 320px;
+        margin: auto;
     }
 
     .auth-card {
