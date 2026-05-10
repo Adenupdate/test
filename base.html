@@ -10,7 +10,8 @@
 
 <body>
     <!-- DEBUG BANNER - REMOVE AFTER VERIFICATION -->
-    <div style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999999;">
+    <div
+        style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999999;">
         DEBUG: TEMPLATE UPDATED {{ range(100, 999)|random }}
     </div>
 
@@ -85,8 +86,7 @@
             </li>
             {% endif %}
             <li>
-                <a href="#" onclick="openProfileModal(); return false;" title="My Profile"
-                    class="user-nav-frame 
+                <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
                                 {% if current_user.role == 'admin_miru' %}frame-miru
                                 {% elif current_user.role == 'admin_focus' %}frame-focus
                                 {% elif current_user.role == 'admin_assistant' %}frame-assistant
@@ -107,10 +107,12 @@
                                 {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
                                 {% elif current_user.role == 'admin' %}badge-admin
                                 {% elif current_user.role == 'member' %}badge-member{% endif %}"
-                              style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
+                            style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
                             {% if current_user.role == 'developer' %}
-                            <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
+                            <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
                             </svg>
                             DEV
                             {% elif current_user.role == 'admin_miru' %}MIRU
@@ -121,8 +123,7 @@
                         </span>
                         {% endif %}
                         {% if current_user.status_text %}
-                        <div
-                            style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9;">
+                        <div style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9;">
                             {{ current_user.status_text }}</div>
                         {% endif %}
 
@@ -302,11 +303,19 @@
 
         /* 📱 ULTRA PREMIUM MOBILE NAVIGATION (FORCED) */
         @media (max-width: 1024px) {
-            .nav-text { display: none !important; }
-            
+            .nav-text {
+                display: none !important;
+            }
+
             /* Hide logo on top if needed, or keep it */
-            .brand-name { font-size: 1.3rem !important; }
-            .brand-logo { width: 32px !important; height: 32px !important; }
+            .brand-name {
+                font-size: 1.3rem !important;
+            }
+
+            .brand-logo {
+                width: 32px !important;
+                height: 32px !important;
+            }
 
             .nav-links {
                 position: fixed !important;
@@ -325,7 +334,8 @@
                 border-radius: 40px !important;
                 padding: 8px 12px !important;
                 box-shadow: 0 10px 40px rgba(255, 117, 140, 0.3) !important;
-                z-index: 999999 !important; /* Extremely high z-index */
+                z-index: 999999 !important;
+                /* Extremely high z-index */
                 justify-content: space-around !important;
                 align-items: center !important;
                 margin: 0 !important;
@@ -369,22 +379,26 @@
                 gap: 0 !important;
                 justify-content: center !important;
             }
-            .user-name-glow, .rank-badge, .user-nav-frame div {
+
+            .user-name-glow,
+            .rank-badge,
+            .user-nav-frame div {
                 display: none !important;
             }
 
             body {
-                padding-bottom: 90px !important; /* Ensure content isn't hidden */
+                padding-bottom: 90px !important;
+                /* Ensure content isn't hidden */
             }
         }
-
     </style>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <div style="text-align: center; padding: 2rem 0 120px; color: #8c7373; font-size: 0.9rem; font-family: 'Prompt', sans-serif; opacity: 0.7;">
+    <div
+        style="text-align: center; padding: 2rem 0 120px; color: #8c7373; font-size: 0.9rem; font-family: 'Prompt', sans-serif; opacity: 0.7;">
         <p>&copy; 2026 Aden ticket. All rights reserved.</p>
     </div>
 
