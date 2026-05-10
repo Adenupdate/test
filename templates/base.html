@@ -153,6 +153,27 @@
                 z-index: 9999 !important; /* Higher z-index */
                 display: block !important;
             }
+            
+            /* ปรับแต่งเมนูแอดมินในมือถือให้พอดี (Admin Mobile Optimization) */
+            .admin-dashboard { padding: 10px !important; }
+            .admin-header h1 { font-size: 1.4rem !important; margin-bottom: 5px !important; }
+            .admin-header p { font-size: 0.8rem !important; }
+            .admin-card { 
+                padding: 15px !important; 
+                margin-bottom: 15px !important; 
+                border-radius: 18px !important; 
+            }
+            .admin-card h2 { font-size: 1.1rem !important; margin-bottom: 1rem !important; }
+            .admin-btn { 
+                width: 100% !important; 
+                min-width: 0 !important; 
+                padding: 10px !important; 
+                font-size: 0.85rem !important;
+                margin-top: 5px !important;
+            }
+            .admin-grid { display: flex !important; flex-direction: column !important; gap: 15px !important; }
+            .admin-form .form-group { margin-bottom: 10px !important; }
+            .admin-form label { font-size: 0.8rem !important; }
         }
         
         /* Hide Mobile Badge on Desktop */
@@ -168,8 +189,8 @@
 
 <body>
 
-    {% if current_user.is_authenticated %}
-    <!-- Mobile User Badge (Top Left) - FORCED INLINE STYLE TO MATCH DESKTOP -->
+    {% if request.path == '/' and current_user.is_authenticated %}
+    <!-- Mobile User Badge (Top Left) - SHOW ONLY ON HOME PAGE -->
     <div class="mobile-user-badge">
         <a href="#" onclick="openProfileModal(); return false;" title="My Profile" 
             class="user-nav-frame 
@@ -212,6 +233,7 @@
             </span>
         </a>
     </div>
+    {% endif %}
     {% endif %}
 
     {% if announcement %}
