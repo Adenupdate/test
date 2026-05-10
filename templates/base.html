@@ -8,18 +8,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1000, 9999)|random }}">
     
     <style>
-        /* บังคับขนาด UI ให้จิ๋วและพอดี (Forced Compact UI) */
-        .auth-card, .form-modal {
+        /* บังคับขนาดหน้า Login และ Profile ให้จิ๋ว (Compact UI) */
+        .auth-card, .modal-compact {
             max-width: 320px !important; 
             width: 90% !important;
             margin: auto !important;
             padding: 1.5rem !important;
             border-radius: 28px !important;
             box-shadow: 0 15px 45px rgba(255, 117, 140, 0.2) !important;
-            
-            /* ปรับสีพื้นหลังให้ตามธีม (Theme Background) */
             background: linear-gradient(135deg, #fff5f7 0%, #ffffff 100%) !important;
-            border: 2px solid #ffadb9 !important; /* ขอบสีชมพูอ่อน */
+            border: 2px solid #ffadb9 !important;
+        }
+
+        /* ขยายหน้ากรอกฟอร์มจองให้กว้างขึ้น (Expanded Booking Form) */
+        .form-modal {
+            max-width: 550px !important; /* ขยายเป็น 550px */
+            width: 95% !important;
+            margin: auto !important;
+            padding: 1.8rem !important;
+            border-radius: 30px !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+            background: #ffffff !important;
+            border: 1px solid #ffadb9 !important;
         }
         
         /* ปรับปรุงหน้าตา Input ให้ดูแพงขึ้น */
@@ -460,7 +470,7 @@
     <!-- Profile Update Modal -->
     {% if current_user.is_authenticated %}
     <div id="profileModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 4000;">
-        <div class="form-modal">
+        <div class="form-modal modal-compact">
             <span class="close-btn" onclick="closeProfileModal()"
                 style="position: absolute; right: 20px; top: 15px; font-size: 1.3rem; color: #aaa;">&times;</span>
             <h2 style="color: var(--deep-pink); text-align: center; margin-bottom: 0.8rem; font-weight: 800; font-size: 1.2rem;">My Profile</h2>
