@@ -145,20 +145,13 @@
             
             body { padding-bottom: 72px !important; }
             
-            /* Mobile User Badge (Top Left) - Replicated from Desktop */
+            /* Mobile User Badge (Top Left) - FULL REPLICA OF DESKTOP FRAME */
             .mobile-user-badge {
                 position: fixed !important;
-                top: 15px !important;
-                left: 15px !important;
+                top: 12px !important;
+                left: 12px !important;
                 z-index: 6000 !important;
                 display: block !important;
-                background: none !important; /* Allow original frame background */
-            }
-            .mobile-user-badge .user-nav-frame {
-                /* Inherit everything from original style, just adjust scale if needed */
-                transform: scale(0.9) !important;
-                transform-origin: top left !important;
-                margin: 0 !important;
             }
         }
         
@@ -176,7 +169,7 @@
 <body>
 
     {% if current_user.is_authenticated %}
-    <!-- Mobile User Badge (Top Left) - EXACT REPLICA OF DESKTOP -->
+    <!-- Mobile User Badge (Top Left) - THE WHOLE PINK FRAME FROM DESKTOP -->
     <div class="mobile-user-badge">
         <a href="#" onclick="openProfileModal(); return false;" title="My Profile" class="user-nav-frame 
                         {% if current_user.role == 'admin_miru' %}frame-miru
@@ -184,10 +177,10 @@
                         {% elif current_user.role == 'admin_assistant' %}frame-assistant
                         {% elif current_user.role == 'developer' %}frame-developer
                         {% elif current_user.role == 'member' %}frame-member{% endif %}"
-            style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px; border-radius: 30px; text-decoration: none; transition: 0.3s; line-height: 1.2; vertical-align: middle;">
+            style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px; border-radius: 30px; text-decoration: none; transition: 0.3s; line-height: 1.2; vertical-align: middle; transform: scale(0.85); transform-origin: top left;">
             <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
                 alt="Profile"
-                style="width: 28px; height: 28px; border-radius: 8px; background: #fff; display: block; object-fit: cover;">
+                style="width: 24px; height: 24px; border-radius: 50%; background: #fff; display: block; object-fit: cover;">
             <span class="user-name-glow"
                 style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left;">
                 {{ current_user.nickname or current_user.username }}
