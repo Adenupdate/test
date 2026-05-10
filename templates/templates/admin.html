@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <header class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage your concerts</p>
+        <div style="margin-top: 1rem;">
+            <a href="{{ url_for('admin_submissions') }}" class="admin-btn" style="display: inline-block; width: auto; text-decoration: none;">View Customer Submissions</a>
+        </div>
+    </header>
+
+    <div class="admin-grid">
+        <!-- System Control Section -->
+        <section class="admin-card full-width" style="background: {% if maintenance_status %}#fff0f0{% else %}#f0fff4{% endif %}; border: 2px solid {% if maintenance_status %}#ffcaca{% else %}#caffda{% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div>
+                    <h2 style="margin-bottom: 0.5rem; color: {% if maintenance_status %}#d32f2f{% else %}#2e7d32{% endif %}; border: none; padding-bottom: 0;">
+                        Website Status: {% if maintenance_status %}ปิดปรับปรุง (Maintenance){% else %}เปิดให้บริการปกติ (Online){% endif %}
+                    </h2>
+                    <p style="margin: 0; font-size: 0.9rem; color: #666;">
+                        {% if maintenance_status %}
+                        ขณะนี้ลูกค้าทั่วไปจะไม่สามารถเข้าใช้งานเว็บได้ จนกว่าจะปิดโหมดนี้
+                        {% else %}
+                        ลูกค้าสามารถเข้าใช้งานและจองคิวได้ตามปกติ
+                        {% endif %}
+                    </p>
+                </div>
+                <form action="{{ url_for('toggle_maintenance') }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="admin-btn" style="width: auto; padding: 0.8rem 2rem; background: {% if maintenance_status %}#2e7d32{% else %}#d32f2f{% endif %}; margin-top: 0; min-width: 250px;">
+                        {% if maintenance_status %}✅ เปิดใช้งานเว็บไซต์ (Go Live){% else %}⚠️ เปิดโหมดปิดปรับปรุง (Maintenance){% endif %}
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Announcement Control Section -->
+        <section class="admin-card full-width" style="background: linear-gradient(135deg, #fff5f7 0%, #fff 100%); border: 2px solid var(--primary-pink);">
+            <!-- Header -->
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem; flex-wrap: wrap;">
+                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #ff758c, #ffadb9); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(255,117,140,0.3);">📢</div>
+                <div style="flex: 1;">
+                    <h2 style="margin: 0; color: var(--deep-pink); border: none; padding: 0; font-size: 1.1rem;">ประกาศด่วน (Announcement Banner)</h2>
+                    <p style="margin: 2px 0 0; font-size: 0.82rem; color: #a08484;">ข้อความจะแสดงเป็นแถบวิ่งด้านบนสุดของทุกหน้า</p>
+                </div>
+                {% if announcement %}
+                <span style="background: #d4edda; color: #155724; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid #c3e6cb; white-space: nowrap;">🟢 กำลังแสดงอยู่</span>
+                {% else %}
+                <span style="background: #f8d7da; color: #721c24; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid #f5c6cb; white-space: nowrap;">⚫ ไม่มีประกาศ</span>
+                {% endif %}
+            </div>
+
+            <!-- Live Preview -->
+            {% if announcement %}
+            <div style="margin-bottom: 1.2rem; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,117,140,0.25);">
+                <div style="background: rgba(255,117,140,0.08); padding: 5px 12px; font-size: 0.75rem; font-weight: 700; color: var(--deep-pink); border-bottom: 1px solid rgba(255,117,140,0.15);">👁 Preview — ตัวอย่างที่จะแสดงบนเว็บ</div>
+                <div class="announcement-banner" style="position: static; border-radius: 0; margin: 0;">
+                    <div class="banner-content" style="padding: 0 15px;">
+                        <span class="banner-icon">📢</span>
+                        <div class="marquee-container" style="overflow: hidden;"><div class="marquee-text">{{ announcement }}</div></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Update Form -->
+            <form action="{{ url_for('update_announcement') }}" method="POST">
+                <textarea name="announcement_text"
+                    placeholder="พิมพ์ข้อความประกาศที่นี่... (เว้นว่างแล้วกด บันทึก เพื่อซ่อนประกาศ)"
+                    style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1.5px solid #f0d0dc; font-family: inherit; font-size: 0.95rem; min-height: 70px; box-sizing: border-box; resize: vertical;">{{ announcement }}</textarea>
+                <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+                    <button type="submit"
+                        style="background: linear-gradient(135deg, #ff758c, #ff4b6e); color: #fff; border: none; padding: 0.7rem 2rem; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(255,117,140,0.4);">
+                        💾 บันทึกประกาศ
+                    </button>
+                </div>
+            </form>
+
+            <!-- Delete Form — MUST be outside the update form -->
+            <form action="{{ url_for('delete_announcement') }}" method="POST" style="margin-top: 10px; display: flex; justify-content: flex-start;">
+                <button type="submit"
+                    onclick="return confirm('ลบประกาศออกจากเว็บไซต์?')"
+                    style="color: #e11d48; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 8px 14px; border: 1.5px solid #fecaca; border-radius: 10px; background: #fff5f5;">
+                    🗑️ ลบประกาศ
+                </button>
+            </form>
+        </section>
+
+
+        <!-- Manage Concerts Section -->
+        <section class="admin-card">
+            <h2>Add New Concert</h2>
+            <form action="{{ url_for('add_concert') }}" method="POST" enctype="multipart/form-data" class="admin-form">
+                <div class="form-group">
+                    <label>Concert Name</label>
+                    <input type="text" name="name" placeholder="Event Title" required>
+                </div>
+                <div class="form-group">
+                    <label>Ticket Price (e.g. 2,500)</label>
+                    <input type="text" name="price" placeholder="Price in THB" required>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (Optional if uploading file)</label>
+                    <input type="text" name="image_url" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Max Capacity (จำนวนบัตรที่เปิดรับ)</label>
+                    <input type="number" name="max_capacity" placeholder="ระบุจำนวน" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Status Badge (ป้ายสถานะมุมขวาบน)</label>
+                    <select name="status_badge">
+                        <option value="none">ไม่แสดง (None)</option>
+                        <option value="coming_soon">เร็วๆ นี้ (Coming Soon)</option>
+                        <option value="now_open">เปิดจองแล้ว (Now Open)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Concert Date (e.g. 24-25 May 2024)</label>
+                    <input type="text" name="date" placeholder="วันเริ่มงาน หรือ ช่วงเวลา">
+                </div>
+                <div class="form-group">
+                    <label>Venue / Location (สถานที่จัดงาน)</label>
+                    <input type="text" name="location" placeholder="เช่น อิมแพ็ค อารีน่า">
+                </div>
+                <div class="form-group">
+                    <label>Upload Image File</label>
+                    <input type="file" name="image_file" accept="image/*">
+                </div>
+                <button type="submit" class="admin-btn">Add Concert</button>
+            </form>
+        </section>
+
+        <!-- Current Concerts List -->
+        <section class="admin-card">
+            <h2>Current Concerts</h2>
+            <div class="concert-list">
+                {% for concert in concerts %}
+                <div class="concert-item" id="concert-row-{{ concert.id }}">
+                    <img src="{{ concert.image }}" alt="{{ concert.name }}">
+                    <div class="concert-item-info">
+                        <strong>{{ concert.name }}</strong>
+                        <span>THB {{ concert.price }}</span>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            Bookings: {{ concert.current_bookings }}
+                            {% if concert.max_capacity > 0 %} / {{ concert.max_capacity }}{% else %} (Unlimited){% endif %}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <!-- Premium Toggle Button -->
+                        <a href="{{ url_for('toggle_concert_booking', id=concert.id) }}" 
+                           class="booking-toggle-btn {% if concert.is_open %}is-open{% else %}is-closed{% endif %}"
+                           title="คลิกเพื่อเปลี่ยนสถานะการจอง">
+                            <div class="toggle-indicator"></div>
+                            <span>{% if concert.is_open %}เปิดจองอยู่{% else %}ปิดจองแล้ว{% endif %}</span>
+                        </a>
+                        
+                        <button class="edit-btn" onclick="toggleEdit({{ concert.id }})">✏️ Edit</button>
+                        <form action="{{ url_for('delete_concert', id=concert.id) }}" method="POST" style="margin:0; display:inline;">
+                            <button type="submit" class="delete-btn"
+                                onclick="return confirm('ลบคอนเสิร์ตนี้?')">
+                                🗑️ Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Inline Edit Form -->
+                <div class="edit-form-panel" id="edit-panel-{{ concert.id }}" style="display:none;">
+                    <form action="{{ url_for('edit_concert', id=concert.id) }}" method="POST" class="edit-inline-form">
+                        <div class="edit-grid">
+                            <div class="edit-field">
+                                <label>Concert Name</label>
+                                <input type="text" name="name" value="{{ concert.name }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label>Ticket Price</label>
+                                <input type="text" name="price" value="{{ concert.price }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label>Max Capacity</label>
+                                <input type="number" name="max_capacity" value="{{ concert.max_capacity }}" min="1" required>
+                            </div>
+                            <div class="edit-field">
+                                <label>Image URL <span style="color:#aaa;font-weight:400;">(leave blank to keep)</span></label>
+                                <input type="text" name="image_url" placeholder="https://...">
+                            </div>
+                            <div class="edit-field">
+                                <label>Status Badge</label>
+                                <select name="status_badge" style="width: 100%; padding: 7px 10px; border: 1px solid #f0d0dc; border-radius: 8px; font-size: 0.88rem; font-family: inherit;">
+                                    <option value="none" {% if concert.status_badge == 'none' %}selected{% endif %}>ไม่แสดง (None)</option>
+                                    <option value="coming_soon" {% if concert.status_badge == 'coming_soon' %}selected{% endif %}>เร็วๆ นี้ (Coming Soon)</option>
+                                    <option value="now_open" {% if concert.status_badge == 'now_open' %}selected{% endif %}>เปิดจองแล้ว (Now Open)</option>
+                                </select>
+                            </div>
+                            <div class="edit-field">
+                                <label>Booking Status</label>
+                                <select name="is_open" style="width: 100%; padding: 7px 10px; border: 1px solid #f0d0dc; border-radius: 8px; font-size: 0.88rem; font-family: inherit;">
+                                    <option value="True" {% if concert.is_open %}selected{% endif %}>เปิดจอง (Open)</option>
+                                    <option value="False" {% if not concert.is_open %}selected{% endif %}>ปิดจอง (Closed)</option>
+                                </select>
+                            </div>
+                            <div class="edit-field">
+                                <label>Date</label>
+                                <input type="text" name="date" value="{{ concert.date }}">
+                            </div>
+                            <div class="edit-field">
+                                <label>Location</label>
+                                <input type="text" name="location" value="{{ concert.location }}">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:12px;">
+                            <button type="submit" class="save-btn">💾 Save Changes</button>
+                            <button type="button" class="cancel-btn" onclick="toggleEdit({{ concert.id }})">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+
+</div>
+
+<style>
+.admin-dashboard {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.admin-header h1 {
+    font-size: 2.5rem;
+    color: var(--deep-pink);
+    margin-bottom: 0.5rem;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.admin-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.admin-card h2 {
+    margin-bottom: 1.5rem;
+    color: var(--deep-pink);
+    border-bottom: 2px solid #fff5f7;
+    padding-bottom: 0.5rem;
+}
+
+.admin-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.admin-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.admin-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+.admin-btn {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.concert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.concert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.concert-item img {
+    width: 60px;
+    height: 40px;
+    object-fit: crop;
+    border-radius: 5px;
+}
+
+.concert-item-info {
+    flex-grow: 1;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: #fff5f5;
+    color: #e11d48;
+    border: 1px solid #ffebeb;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    height: 34px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+.delete-btn:hover {
+    background: #e11d48;
+    color: #fff;
+    border-color: #e11d48;
+}
+
+.edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: var(--soft-pink);
+    color: var(--deep-pink);
+    border: 1px solid var(--primary-pink);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    height: 34px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+.edit-btn:hover { 
+    background: var(--primary-pink); 
+    color: #fff; 
+}
+
+/* Inline Edit Panel */
+.edit-form-panel {
+    background: #fff8fb;
+    border: 1px solid #f0d0dc;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 8px;
+    animation: slideDown 0.2s ease;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+.edit-inline-form label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--deep-pink);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+.edit-inline-form input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #f0d0dc;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+.edit-inline-form input:focus { outline: none; border-color: var(--primary-pink); }
+
+.edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.save-btn {
+    background: var(--gradient-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.save-btn:hover { opacity: 0.88; }
+
+.cancel-btn {
+    background: #f5f5f5;
+    color: #888;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.cancel-btn:hover { background: #eee; }
+
+@media (max-width: 768px) {
+    .admin-grid { grid-template-columns: 1fr; }
+}
+
+/* Premium Booking Toggle */
+.booking-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    min-width: 110px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.booking-toggle-btn.is-open {
+    background: #e6fffa;
+    color: #0d9488;
+    border-color: #99f6e4;
+}
+
+.booking-toggle-btn.is-closed {
+    background: #fff5f5;
+    color: #e11d48;
+    border-color: #fecdd3;
+}
+
+.booking-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.toggle-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.is-open .toggle-indicator {
+    background: #14b8a6;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+}
+
+.is-open .toggle-indicator::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    70% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.is-closed .toggle-indicator {
+    background: #e11d48;
+}
+
+</style>
+
+<script>
+function toggleEdit(id) {
+    const panel = document.getElementById('edit-panel-' + id);
+    panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+}
+
+</script>
+{% endblock %}
+

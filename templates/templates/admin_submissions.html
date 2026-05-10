@@ -1,0 +1,496 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  .sub-page { font-family: 'Inter', sans-serif; background: transparent; min-height: 100vh; padding: 30px 20px; }
+
+  /* Header */
+  .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+  .sub-title { font-size: 1.8rem; font-weight: 700; color: var(--deep-pink); }
+  .sub-title span { color: var(--deep-pink); }
+  .sub-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+  .stat-pill { background: var(--soft-pink); border: 1px solid var(--primary-pink); border-radius: 999px; padding: 6px 18px; font-size: 0.82rem; color: var(--deep-pink); }
+  .stat-pill b { color: var(--deep-pink); }
+
+  /* Nav buttons */
+  .sub-nav { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .sub-nav a { padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .btn-back { background: var(--soft-pink); color: var(--deep-pink); border: 1px solid var(--primary-pink); }
+  .btn-back:hover { background: var(--primary-pink); color: #fff; }
+  .btn-users { background: var(--soft-pink); color: var(--deep-pink); border: 1px solid var(--primary-pink); }
+  .btn-users:hover { background: var(--primary-pink); color: #fff; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; border: 1px solid var(--primary-pink); background: transparent; color: var(--deep-pink); cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover, .filter-btn.active { background: var(--primary-pink); color: #fff; border-color: var(--primary-pink); }
+
+  /* Cards container */
+  .cards-grid { display: grid; gap: 16px; }
+
+  /* Submission card */
+  .sub-card {
+    background: #16161f;
+    border: 1px solid #2a2a3e;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .sub-card:hover { border-color: #a78bfa44; box-shadow: 0 4px 24px #a78bfa11; }
+
+  .card-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+  }
+
+  .card-id { font-size: 0.75rem; color: #555; font-weight: 600; background: #0f0f13; border: 1px solid #2a2a3e; border-radius: 8px; padding: 4px 10px; white-space: nowrap; }
+
+  .card-main { min-width: 0; }
+  .card-name { font-size: 1rem; font-weight: 600; color: #e2e2f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-concert { font-size: 0.8rem; color: #7070a0; margin-top: 2px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+  .badge-pending  { background: #fbbf2422; color: #fbbf24; border: 1px solid #fbbf2444; }
+  .badge-confirmed { background: #10b98122; color: #10b981; border: 1px solid #10b98144; }
+  .badge-cancelled { background: #ef444422; color: #ef4444; border: 1px solid #ef444444; }
+  .badge-standby { background: #6366f122; color: #818cf8; border: 1px solid #6366f144; }
+  .badge-queuing { background: #8b5cf622; color: #a78bfa; border: 1px solid #8b5cf644; }
+  .badge-inchart { background: #ec489922; color: #f472b6; border: 1px solid #ec489944; }
+  .badge-booked { background: #05966922; color: #34d399; border: 1px solid #05966944; }
+
+  .toggle-arrow { color: #555; font-size: 0.75rem; transition: transform 0.25s; }
+  .sub-card.open .toggle-arrow { transform: rotate(180deg); }
+
+  /* Expanded detail */
+  .card-detail { display: none; border-top: 1px solid #1e1e2e; padding: 20px; }
+  .sub-card.open .card-detail { display: block; }
+
+  .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px 20px; margin-bottom: 20px; }
+  .detail-item label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--deep-pink); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .detail-item span { font-size: 0.9rem; color: #c0c0e0; font-weight: 500; }
+  .detail-item span.mono { font-family: 'Courier New', monospace; font-size: 0.85rem; }
+  .detail-item span.highlight { color: #a78bfa; }
+  .detail-item span.green { color: #10b981; }
+  .detail-item span.yellow { color: #fbbf24; }
+
+  /* Action bar */
+  .card-actions { display: flex; gap: 10px; align-items: center; padding-top: 16px; border-top: 1px solid #1e1e2e; flex-wrap: wrap; }
+  .card-actions label { font-size: 0.8rem; color: #7070a0; font-weight: 500; }
+
+  /* Edit Mode Styles */
+  .edit-form { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #2a2a3e; }
+  .sub-card.editing .edit-form { display: block; }
+  .sub-card.editing .detail-grid { display: none; }
+  .sub-card.editing .card-actions { display: none; }
+
+  .edit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px 20px; margin-bottom: 20px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 0.7rem; font-weight: 600; color: var(--deep-pink); text-transform: uppercase; margin-bottom: 4px; }
+  .form-input { width: 100%; padding: 8px 12px; border: 1px solid #2a2a3e; background: #ffffff; color: #000000; border-radius: 8px; font-size: 0.85rem; outline: none; font-weight: 600; }
+  .form-input:focus { border-color: #a78bfa; box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2); }
+  .btn-save { background: #10b981; color: #fff; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.82rem; }
+  .btn-cancel { background: #374151; color: #d1d5db; border: 1px solid #4b5563; padding: 6px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.82rem; }
+
+  .status-select {
+    background: #0f0f13;
+    border: 1px solid #2a2a3e;
+    color: #c0c0e0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .status-select:hover { border-color: #a78bfa55; }
+
+  .btn-edit {
+    background: #a78bfa11;
+    color: #a78bfa;
+    border: 1px solid #a78bfa33;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-edit:hover { background: #a78bfa33; }
+
+  .btn-delete {
+    background: #ef444411;
+    color: #ef4444;
+    border: 1px solid #ef444433;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-delete:hover { background: #ef444433; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 60px 20px; color: #555; }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 1rem; }
+
+  /* Grouping */
+  .concert-group { margin-bottom: 40px; }
+  .group-header { 
+    background: linear-gradient(90deg, var(--deep-pink), #ffadb9); 
+    color: white; 
+    padding: 12px 20px; 
+    border-radius: 12px; 
+    margin-bottom: 15px; 
+    font-size: 1.1rem; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(255, 117, 140, 0.2);
+  }
+  .group-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+</style>
+
+<div class="sub-page">
+  <div class="sub-header">
+    <div>
+      <div class="sub-title">🎫 <span>Ticket Submissions</span></div>
+      <div style="color:#555; font-size:0.82rem; margin-top:4px;">จัดการคำสั่งจองคอนเสิร์ตทั้งหมด</div>
+    </div>
+    <div class="sub-stats">
+      <div class="stat-pill">ทั้งหมด <b>{{ submissions|length }}</b></div>
+      <div class="stat-pill">รอดำเนินการ <b style="color:#fbbf24">{{ submissions|selectattr('status','equalto','Pending')|list|length }}</b></div>
+      <div class="stat-pill">ยืนยันแล้ว <b style="color:#10b981">{{ submissions|selectattr('status','equalto','Confirmed')|list|length }}</b></div>
+    </div>
+  </div>
+
+  <div class="sub-nav">
+    <a href="{{ url_for('admin') }}" class="sub-nav a btn-back">← Dashboard</a>
+    <a href="{{ url_for('admin_users') }}" class="sub-nav a btn-users">👥 User Management</a>
+    <a href="{{ url_for('export_submissions') }}" class="sub-nav a btn-excel" style="background: #10b981; color: #fff; border: 1px solid #059669;">📥 Export to Excel</a>
+    <form action="{{ url_for('delete_all_submissions') }}" method="POST" style="margin: 0; margin-left: auto;">
+      <button type="submit" class="sub-nav a"
+        style="background: #ef4444; color: #fff; border: 1px solid #dc2626; padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer;"
+        onclick="return confirm('⚠️ ลบข้อมูลการจองทั้งหมดในระบบ? ไม่สามารถย้อนกลับได้!')">🗑️ Delete All Data</button>
+    </form>
+  </div>
+
+  <div class="search-container" style="margin-bottom: 20px;">
+      <input type="text" id="submissionSearch" placeholder="Search by Concert or Name..." onkeyup="filterAll()" style="width: 100%; max-width: 400px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--primary-pink); font-size: 0.9rem; outline: none; background: transparent; color: var(--deep-pink); transition: box-shadow 0.3s;" onfocus="this.style.boxShadow='0 0 0 3px rgba(255, 182, 193, 0.3)'" onblur="this.style.boxShadow='none'">
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-status="all" onclick="filterCards('all', this)">ทั้งหมด</button>
+    <button class="filter-btn" data-status="Pending" onclick="filterCards('Pending', this)">⏳ Pending</button>
+    <button class="filter-btn" data-status="Standby" onclick="filterCards('Standby', this)">📋 สแตนบายรอกด</button>
+    <button class="filter-btn" data-status="Queuing" onclick="filterCards('Queuing', this)">🚶 กำลังเข้าคิว</button>
+    <button class="filter-btn" data-status="InChart" onclick="filterCards('InChart', this)">🗺️ เข้าหน้าผังแล้ว</button>
+    <button class="filter-btn" data-status="Booked" onclick="filterCards('Booked', this)">💎 จองที่นั่งสำเร็จ</button>
+    <button class="filter-btn" data-status="Confirmed" onclick="filterCards('Confirmed', this)">✅ Confirmed</button>
+    <button class="filter-btn" data-status="Cancelled" onclick="filterCards('Cancelled', this)">❌ Cancelled</button>
+  </div>
+
+  <div id="cards-container">
+    {% if submissions %}
+      {% for concert_name, concert_submissions in submissions|groupby('concert_name') %}
+      <div class="concert-group" data-concert="{{ concert_name }}">
+        <div class="group-header">
+            <span>🎬 {{ concert_name }}</span>
+            <span class="group-count">{{ concert_submissions|length }} รายการ</span>
+        </div>
+        <div class="cards-grid">
+          {% for s in concert_submissions %}
+          <div class="sub-card" data-status="{{ s.status or 'Pending' }}" id="card-{{ s.id }}">
+            <div class="card-top" onclick="toggleCard({{ s.id }})">
+              <div class="card-id">#{{ s.id }}</div>
+              <div class="card-main">
+                <div class="card-name">
+                  {{ s.customer_name }} {{ s.customer_surname }}
+                  {% if s.user %}
+                  {% if s.user.role != 'user' %}
+                  <span class="rank-badge 
+                      {% if s.user.role == 'developer' %}badge-developer
+                      {% elif s.user.role == 'admin_miru' %}badge-admin-miru
+                      {% elif s.user.role == 'admin_focus' %}badge-admin-focus
+                      {% elif s.user.role == 'admin_assistant' %}badge-admin-assistant
+                      {% elif s.user.role == 'admin' %}badge-admin
+                      {% elif s.user.role == 'member' %}badge-member{% endif %}">
+                      {% if s.user.role == 'developer' %}
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        Developers
+                      {% elif s.user.role == 'admin_miru' %}ADMIN MIRU
+                      {% elif s.user.role == 'admin_focus' %}ADMIN FOCUS
+                      {% elif s.user.role == 'admin_assistant' %}ผู้ช่วยงาน ADMIN
+                      {% elif s.user.role == 'admin' %}แอดมิน
+                      {% elif s.user.role == 'member' %}MEMBER{% endif %}
+                  </span>
+                  {% endif %}
+                  {% endif %}
+                </div>
+                <div class="card-concert">🎵 {{ s.concert_name }} &nbsp;|&nbsp; Zone: {{ s.primary_zone }}{% if s.backup_zone %} / {{ s.backup_zone }}{% endif %}</div>
+                <div style="font-size: 0.72rem; color: #555; margin-top: 4px;">🕒 Submitted: {{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else '-' }}</div>
+              </div>
+              <div>
+                {% set st = s.status or 'Pending' %}
+                <span class="badge badge-{{ st.lower() }}">
+                  {% if st == 'Pending' %}⏳ Pending
+                  {% elif st == 'Confirmed' %}✅ Confirmed
+                  {% elif st == 'Cancelled' %}❌ Cancelled
+                  {% elif st == 'Standby' %}📋 สแตนบายรอกด
+                  {% elif st == 'Queuing' %}🚶 กำลังเข้าคิว
+                  {% elif st == 'InChart' %}🗺️ เข้าหน้าผังแล้ว
+                  {% elif st == 'Booked' %}💎 จองที่นั่งสำเร็จ
+                  {% else %}{{ st }}{% endif %}
+                </span>
+              </div>
+              <div class="toggle-arrow">▼</div>
+            </div>
+
+            <div class="card-detail">
+              <div class="detail-grid">
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                  <label>เว็บกดบัตร (Ticketing Platform)</label>
+                  <span style="color: #fbbf24; font-weight: 800; font-size: 1.1rem; text-transform: uppercase;">{{ s.ticketing_platform or '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>เวลาที่ส่งข้อมูล (Submission Time)</label>
+                  <span style="color: #fff; background: var(--deep-pink); padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">{{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Username / Password</label>
+                  <span style="color: #c0c0e0; font-weight: 500; font-size: 0.9rem;">{{ s.customer_name }} / {{ s.customer_surname }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>อีเมล</label>
+                  <span class="mono">{{ s.email }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>เบอร์โทร</label>
+                  <span class="mono highlight">{{ s.phone_number }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Twitter / X</label>
+                  <span class="mono">{{ s.twitter_account }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Membership</label>
+                  <span class="yellow">{{ s.membership or '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>รอบการแสดง</label>
+                  <span style="white-space: pre-line; display: block; line-height: 1.4; color: #10b981;">{{ s.show_time }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>ชื่อบนบัตร</label>
+                  <span style="white-space: pre-line; display: block; line-height: 1.4;">{{ s.ticket_name or '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>ช่องทางชำระเงิน</label>
+                  <span>{{ s.payment_method }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>ราคาบัตร (หลัก)</label>
+                  <span class="green" style="white-space: pre-line; display: block;">{{ s.ticket_price }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>ราคาบัตร (สำรอง)</label>
+                  <span style="white-space: pre-line; display: block;">{{ s.backup_price or '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>โซนหลัก</label>
+                  <span class="highlight" style="white-space: pre-line; display: block;">{{ s.primary_zone }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>โซนสำรอง</label>
+                  <span style="white-space: pre-line; display: block;">{{ s.backup_zone or '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>จำนวนบัตร</label>
+                  <span class="highlight" style="font-size: 1.1rem; font-weight: 700; white-space: pre-line; display: block;">{{ s.ticket_quantity }} ใบ</span>
+                </div>
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                  <label>หมายเหตุจากลูกค้า</label>
+                  <span style="white-space: pre-line; display: block; line-height: 1.4; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 8px; border-left: 4px solid #fbbf24;">{{ s.note or '-' }}</span>
+                </div>
+              </div>
+
+              <!-- Edit Form -->
+              <div class="edit-form" id="edit-form-{{ s.id }}">
+                <form action="{{ url_for('edit_submission', id=s.id) }}" method="POST">
+                  <div class="edit-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                      <label>เว็บกดบัตร (Ticketing Platform)</label>
+                      <input type="text" name="ticketing_platform" value="{{ s.ticketing_platform }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>Username (ของลูกค้า)</label>
+                      <input type="text" name="customer_name" value="{{ s.customer_name }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>Password (ของลูกค้า)</label>
+                      <input type="text" name="customer_surname" value="{{ s.customer_surname }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>อีเมล</label>
+                      <input type="email" name="email" value="{{ s.email }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>เบอร์โทร</label>
+                      <input type="text" name="phone_number" value="{{ s.phone_number }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>Twitter / X</label>
+                      <input type="text" name="twitter_account" value="{{ s.twitter_account }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>Membership ( ถ้าไม่ใช่รอบเมมใส่ - )</label>
+                      <input type="text" name="membership" value="{{ s.membership }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label>รอบการแสดง</label>
+                      <textarea name="show_time" class="form-input" style="min-height: 80px;">{{ s.show_time }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>โซนหลัก</label>
+                      <textarea name="primary_zone" class="form-input" style="min-height: 60px;">{{ s.primary_zone }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>โซนสำรอง</label>
+                      <textarea name="backup_zone" class="form-input" style="min-height: 60px;">{{ s.backup_zone }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>ราคาบัตร</label>
+                      <textarea name="ticket_price" class="form-input" style="min-height: 60px;">{{ s.ticket_price }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>ราคาบัตร (สำรอง)</label>
+                      <textarea name="backup_price" class="form-input" style="min-height: 60px;">{{ s.backup_price }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>จำนวนบัตร (แยกบรรทัดตามอันดับ)</label>
+                      <textarea name="ticket_quantity" class="form-input" style="min-height: 60px;">{{ s.ticket_quantity }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>ชื่อบนบัตร</label>
+                      <input type="text" name="ticket_name" value="{{ s.ticket_name }}" class="form-input">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                      <label>หมายเหตุ</label>
+                      <textarea name="note" class="form-input" style="min-height: 80px;">{{ s.note }}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>สถานะ</label>
+                      <select name="status" class="form-input">
+                        <option value="Pending"   {% if (s.status or 'Pending') == 'Pending'   %}selected{% endif %}>⏳ Pending</option>
+                        <option value="Standby"   {% if (s.status or 'Pending') == 'Standby'   %}selected{% endif %}>📋 สแตนบายรอกด</option>
+                        <option value="Queuing"   {% if (s.status or 'Pending') == 'Queuing'   %}selected{% endif %}>🚶 กำลังเข้าคิว</option>
+                        <option value="InChart"   {% if (s.status or 'Pending') == 'InChart'   %}selected{% endif %}>🗺️ เข้าหน้าผังแล้ว</option>
+                        <option value="Booked"    {% if (s.status or 'Pending') == 'Booked'    %}selected{% endif %}>💎 จองที่นั่งสำเร็จ</option>
+                        <option value="Confirmed" {% if (s.status or 'Pending') == 'Confirmed' %}selected{% endif %}>✅ Confirmed</option>
+                        <option value="Cancelled" {% if (s.status or 'Pending') == 'Cancelled' %}selected{% endif %}>❌ Cancelled</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-cancel" onclick="toggleEdit({{ s.id }})">ยกเลิก</button>
+                    <button type="submit" class="btn-save">บันทึกข้อมูล</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Action bar -->
+              <div class="card-actions">
+                <label>เปลี่ยนสถานะ:</label>
+                <form action="{{ url_for('edit_submission', id=s.id) }}" method="POST" style="display: inline;">
+                  <select name="status" class="status-select" onchange="this.form.submit()">
+                    <option value="Pending"   {% if (s.status or 'Pending') == 'Pending'   %}selected{% endif %}>⏳ Pending</option>
+                    <option value="Standby"   {% if (s.status or 'Pending') == 'Standby'   %}selected{% endif %}>📋 สแตนบายรอกด</option>
+                    <option value="Queuing"   {% if (s.status or 'Pending') == 'Queuing'   %}selected{% endif %}>🚶 กำลังเข้าคิว</option>
+                    <option value="InChart"   {% if (s.status or 'Pending') == 'InChart'   %}selected{% endif %}>🗺️ เข้าหน้าผังแล้ว</option>
+                    <option value="Booked"    {% if (s.status or 'Pending') == 'Booked'    %}selected{% endif %}>💎 จองที่นั่งสำเร็จ</option>
+                    <option value="Confirmed" {% if (s.status or 'Pending') == 'Confirmed' %}selected{% endif %}>✅ Confirmed</option>
+                    <option value="Cancelled" {% if (s.status or 'Pending') == 'Cancelled' %}selected{% endif %}>❌ Cancelled</option>
+                  </select>
+                </form>
+                <button class="btn-edit" onclick="toggleEdit({{ s.id }})">✏️ แก้ไข</button>
+                <form action="{{ url_for('delete_submission', id=s.id) }}" method="POST" style="margin:0; display:inline;">
+                  <button type="submit" class="btn-delete"
+                    onclick="return confirm('ลบรายการ #{{ s.id }} นี้?')">🗑 ลบ</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">🎟️</div>
+        <p>ยังไม่มีรายการจองในระบบ</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (!card.classList.contains('editing')) {
+    card.classList.toggle('open');
+  }
+}
+
+function toggleEdit(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('editing');
+  if (!card.classList.contains('open')) {
+    card.classList.add('open');
+  }
+}
+
+function filterCards(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAll();
+}
+
+function filterAll() {
+  let searchInput = document.getElementById('submissionSearch').value.toLowerCase();
+  let currentStatus = document.querySelector('.filter-btn.active').dataset.status;
+  
+  document.querySelectorAll('.concert-group').forEach(group => {
+    let hasVisibleCard = false;
+    group.querySelectorAll('.sub-card').forEach(card => {
+      let cardStatus = card.dataset.status;
+      let textContent = card.innerText.toLowerCase();
+      
+      let statusMatch = (currentStatus === 'all' || cardStatus === currentStatus);
+      let searchMatch = (textContent.includes(searchInput));
+      
+      if (statusMatch && searchMatch) {
+        card.style.display = '';
+        hasVisibleCard = true;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    group.style.display = hasVisibleCard ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

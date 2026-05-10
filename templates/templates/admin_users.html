@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% macro user_row(user) %}
+<tr class="user-row {% if user.is_banned %}row-banned{% endif %}">
+    <td>
+        <div class="user-info">
+            <div class="avatar" style="background: {% if user.role == 'developer' %}#000{% elif user.role == 'admin_miru' %}linear-gradient(45deg, #ff00cc, #3333ff){% elif user.role == 'admin_focus' %}linear-gradient(45deg, #00f2fe, #4facfe){% elif user.role == 'admin' %}#ec4899{% elif user.role == 'member' %}#10b981{% else %}#94a3b8{% endif %};">
+                {{ user.username[0]|upper }}
+            </div>
+            <div class="details">
+                <div class="username">{{ user.username }}</div>
+                <div class="user-id">ID: #{{ user.id }}</div>
+            </div>
+        </div>
+    </td>
+    <td>
+        <div class="status-tags">
+            {% if user.role == 'developer' %}
+                <span class="rank-badge badge-developer">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    Developers
+                </span>
+            {% elif user.role == 'admin_miru' %}
+                <span class="rank-badge badge-admin-miru">ADMIN MIRU</span>
+            {% elif user.role == 'admin_focus' %}
+                <span class="rank-badge badge-admin-focus">ADMIN FOCUS</span>
+            {% elif user.role == 'admin_assistant' %}
+                <span class="rank-badge badge-admin-assistant">ผู้ช่วยงาน ADMIN</span>
+            {% elif user.role == 'admin' %}
+                <span class="rank-badge badge-admin">แอดมิน</span>
+            {% elif user.role == 'member' %}
+                <span class="rank-badge badge-member">MEMBER</span>
+            {% else %}
+                <span style="font-weight: 600; color: #aaa;">-</span>
+            {% endif %}
+
+            
+            {% if user.is_banned %}
+                <span class="badge badge-banned">Banned</span>
+            {% endif %}
+        </div>
+    </td>
+    <td>
+        <div class="activity-box">
+            <span class="count">{{ user.submissions|length }}</span>
+            <span class="unit">Bookings</span>
+        </div>
+    </td>
+    <td>
+        <div class="action-group">
+            <form action="{{ url_for('set_user_role', id=user.id) }}" method="POST" style="display: flex; gap: 5px;">
+                <select name="role" class="role-select" onchange="this.form.submit()">
+                    <option value="user" {% if user.role == 'user' %}selected{% endif %}>สมาชิกทั่วไป</option>
+                    <option value="member" {% if user.role == 'member' %}selected{% endif %}>เมมเบอร์</option>
+                    <option value="admin_assistant" {% if user.role == 'admin_assistant' %}selected{% endif %}>ผู้ช่วยงาน ADMIN</option>
+                    <option value="admin_focus" {% if user.role == 'admin_focus' %}selected{% endif %}>ADMIN FOCUS</option>
+                    <option value="admin_miru" {% if user.role == 'admin_miru' %}selected{% endif %}>ADMIN MIRU</option>
+                    <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developers</option>
+                </select>
+            </form>
+
+            <a href="{{ url_for('ban_user', id=user.id) }}" 
+               class="btn-action btn-ban {% if user.is_banned %}active{% endif %}"
+               onclick="return confirm('Change status for {{ user.username }}?')"
+               title="Toggle Ban Status">
+                <span class="icon">🚫</span>
+            </a>
+            <form action="{{ url_for('delete_user', id=user.id) }}" method="POST" style="margin:0;">
+                <button type="submit"
+                   class="btn-action btn-delete"
+                   onclick="return confirm('ลบ user {{ user.username }} ถาวร?')"
+                   title="Delete User"
+                   style="cursor:pointer; border:none;">
+                    <span class="icon">🗑️</span>
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>
+{% endmacro %}
+
+<div class="admin-container">
+    <!-- Admin Sidebar/Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-shield"></i>
+            <span>Admin Center</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin') }}" class="nav-item">
+                <span class="icon">🎟️</span> Concerts
+            </a>
+            <a href="{{ url_for('admin_submissions') }}" class="nav-item">
+                <span class="icon">📝</span> Submissions
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="nav-item active">
+                <span class="icon">👥</span> User Management
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <header class="content-header">
+            <div class="header-titles">
+                <h1>User Management</h1>
+                <p>Monitor community activity and manage permissions</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <span class="label">Total Members</span>
+                    <span class="value">{{ users|length }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-container" style="margin-bottom: 20px;">
+            <input type="text" id="userSearch" placeholder="Search by Username or ID..." onkeyup="filterUsers()" style="width: 100%; max-width: 400px; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--primary-pink); font-size: 0.95rem; outline: none; transition: box-shadow 0.3s;" onfocus="this.style.boxShadow='0 0 0 3px rgba(255, 182, 193, 0.3)'" onblur="this.style.boxShadow='none'">
+        </div>
+
+        <!-- Unified User Table -->
+        <div class="section-title">
+            <span class="icon">👥</span> รายชื่อผู้ใช้ทั้งหมด (All Users)
+        </div>
+        <div class="luxury-card">
+            <div class="table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Member Info</th>
+                            <th>Rank &amp; Status</th>
+                            <th>Activity</th>
+                            <th>Management</th>
+                        </tr>
+                    </thead>
+                    <tbody class="userTableBody">
+                        {% for user in users|sort(attribute='id', reverse=True) %}
+                        {{ user_row(user) }}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+function filterUsers() {
+    let input = document.getElementById("userSearch");
+    let filter = input.value.toLowerCase();
+    let bodies = document.getElementsByClassName("userTableBody");
+
+    for (let b = 0; b < bodies.length; b++) {
+        let tr = bodies[b].getElementsByClassName("user-row");
+        for (let i = 0; i < tr.length; i++) {
+            let usernameDiv = tr[i].querySelector(".username");
+            let idDiv = tr[i].querySelector(".user-id");
+            
+            if (usernameDiv && idDiv) {
+                let usernameValue = usernameDiv.textContent || usernameDiv.innerText;
+                let idValue = idDiv.textContent || idDiv.innerText;
+                
+                if (usernameValue.toLowerCase().indexOf(filter) > -1 || idValue.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+    }
+}
+</script>
+
+<style>
+    :root {
+        --admin-bg: #fffafa;
+        --sidebar-width: 260px;
+        --dev-color: #6366f1;
+        --admin-color: #ec4899;
+        --member-color: #10b981;
+        --user-color: #64748b;
+    }
+
+    .admin-container {
+        display: flex;
+        min-height: 80vh;
+        background: var(--admin-bg);
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(255, 182, 193, 0.2);
+        margin: 2rem 0;
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+        width: var(--sidebar-width);
+        background: white;
+        border-right: 1px solid rgba(255, 182, 193, 0.3);
+        padding: 2rem 1rem;
+    }
+
+    .sidebar-header {
+        padding: 0 1rem 2rem;
+        font-weight: 800;
+        color: var(--deep-pink);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        padding: 12px 15px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #666;
+        font-weight: 600;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-item:hover {
+        background: var(--soft-pink);
+        color: var(--deep-pink);
+    }
+
+    .nav-item.active {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 10px 20px rgba(255, 117, 140, 0.3);
+    }
+
+    /* Main Content */
+    .admin-main {
+        flex: 1;
+        padding: 3rem;
+        background: white;
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .header-titles h1 {
+        font-size: 2.2rem;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--deep-pink);
+        margin: 30px 0 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stat-badge {
+        background: var(--soft-pink);
+        padding: 10px 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid var(--primary-pink);
+    }
+
+    .stat-badge .label { display: block; font-size: 0.75rem; color: var(--deep-pink); font-weight: 700; }
+    .stat-badge .value { font-size: 1.2rem; font-weight: 800; color: var(--deep-pink); }
+
+    /* Table */
+    .user-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .user-table th {
+        padding: 0.8rem 1.5rem;
+        text-align: left;
+        color: #999;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    .user-table td {
+        background: #fdfdfd;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .user-table td:first-child { border-left: 1px solid #f0f0f0; border-radius: 12px 0 0 12px; }
+    .user-table td:last-child { border-right: 1px solid #f0f0f0; border-radius: 0 12px 12px 0; }
+
+    /* User Info */
+    .user-info { display: flex; align-items: center; gap: 15px; }
+    .avatar {
+        width: 40px; height: 40px;
+        color: white;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1.1rem;
+    }
+    .username { font-weight: 700; color: var(--text-color); font-size: 1rem; }
+    .user-id { font-size: 0.7rem; color: #aaa; }
+
+    /* Badges */
+    .status-tags { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    
+    .badge-banned { 
+        background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; 
+        padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; width: fit-content;
+    }
+
+
+    /* Activity */
+    .activity-box {
+        background: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .activity-box .count { font-size: 1.1rem; font-weight: 800; color: var(--deep-pink); }
+    .activity-box .unit { font-size: 0.65rem; color: #888; display: block; }
+
+    /* Actions */
+    .action-group { display: flex; gap: 8px; align-items: center; }
+    .role-select {
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+        outline: none;
+        cursor: pointer;
+    }
+    .btn-action {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        text-decoration: none; transition: 0.2s;
+    }
+    .btn-ban { background: #f1f5f9; color: #64748b; }
+    .btn-ban.active { background: #ef4444; color: white; }
+    .btn-delete { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+
+    @media (max-width: 1024px) {
+        .admin-container { flex-direction: column; }
+        .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #eee; }
+        .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+    }
+</style>
+{% endblock %}
