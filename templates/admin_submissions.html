@@ -182,7 +182,11 @@
     <a href="{{ url_for('admin') }}" class="sub-nav a btn-back">← Dashboard</a>
     <a href="{{ url_for('admin_users') }}" class="sub-nav a btn-users">👥 User Management</a>
     <a href="{{ url_for('export_submissions') }}" class="sub-nav a btn-excel" style="background: #10b981; color: #fff; border: 1px solid #059669;">📥 Export to Excel</a>
-    <a href="{{ url_for('delete_all_submissions') }}" class="sub-nav a" style="background: #ef4444; color: #fff; border: 1px solid #dc2626; margin-left: auto;" onclick="return confirm('⚠️ คำเตือน: คุณแน่ใจหรือไม่ที่จะลบข้อมูลการจองทั้งหมดในระบบ? \n\nการกระทำนี้ไม่สามารถย้อนกลับได้!')">🗑️ Delete All Data</a>
+    <form action="{{ url_for('delete_all_submissions') }}" method="POST" style="margin: 0; margin-left: auto;">
+      <button type="submit" class="sub-nav a"
+        style="background: #ef4444; color: #fff; border: 1px solid #dc2626; padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer;"
+        onclick="return confirm('⚠️ ลบข้อมูลการจองทั้งหมดในระบบ? ไม่สามารถย้อนกลับได้!')">🗑️ Delete All Data</button>
+    </form>
   </div>
 
   <div class="search-container" style="margin-bottom: 20px;">
@@ -214,7 +218,29 @@
             <div class="card-top" onclick="toggleCard({{ s.id }})">
               <div class="card-id">#{{ s.id }}</div>
               <div class="card-main">
-                <div class="card-name">{{ s.customer_name }} {{ s.customer_surname }}</div>
+                <div class="card-name">
+                  {{ s.customer_name }} {{ s.customer_surname }}
+                  {% if s.user %}
+                  {% if s.user.role != 'user' %}
+                  <span class="rank-badge 
+                      {% if s.user.role == 'developer' %}badge-developer
+                      {% elif s.user.role == 'admin_miru' %}badge-admin-miru
+                      {% elif s.user.role == 'admin_focus' %}badge-admin-focus
+                      {% elif s.user.role == 'admin_assistant' %}badge-admin-assistant
+                      {% elif s.user.role == 'admin' %}badge-admin
+                      {% elif s.user.role == 'member' %}badge-member{% endif %}">
+                      {% if s.user.role == 'developer' %}
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        Developers
+                      {% elif s.user.role == 'admin_miru' %}ADMIN MIRU
+                      {% elif s.user.role == 'admin_focus' %}ADMIN FOCUS
+                      {% elif s.user.role == 'admin_assistant' %}ผู้ช่วยงาน ADMIN
+                      {% elif s.user.role == 'admin' %}แอดมิน
+                      {% elif s.user.role == 'member' %}MEMBER{% endif %}
+                  </span>
+                  {% endif %}
+                  {% endif %}
+                </div>
                 <div class="card-concert">🎵 {{ s.concert_name }} &nbsp;|&nbsp; Zone: {{ s.primary_zone }}{% if s.backup_zone %} / {{ s.backup_zone }}{% endif %}</div>
                 <div style="font-size: 0.72rem; color: #555; margin-top: 4px;">🕒 Submitted: {{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else '-' }}</div>
               </div>
@@ -401,7 +427,10 @@
                   </select>
                 </form>
                 <button class="btn-edit" onclick="toggleEdit({{ s.id }})">✏️ แก้ไข</button>
-                <a href="{{ url_for('delete_submission', id=s.id) }}" class="btn-delete" onclick="return confirm('ลบรายการ #{{ s.id }} นี้?')">🗑 ลบ</a>
+                <form action="{{ url_for('delete_submission', id=s.id) }}" method="POST" style="margin:0; display:inline;">
+                  <button type="submit" class="btn-delete"
+                    onclick="return confirm('ลบรายการ #{{ s.id }} นี้?')">🗑 ลบ</button>
+                </form>
               </div>
             </div>
           </div>

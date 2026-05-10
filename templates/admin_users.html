@@ -6,7 +6,7 @@
 <tr class="user-row {% if user.is_banned %}row-banned{% endif %}">
     <td>
         <div class="user-info">
-            <div class="avatar" style="background: {% if user.role == 'developer' %}#6366f1{% elif user.role == 'admin' %}#ec4899{% elif user.role == 'member' %}#10b981{% else %}#94a3b8{% endif %};">
+            <div class="avatar" style="background: {% if user.role == 'developer' %}#000{% elif user.role == 'admin_miru' %}linear-gradient(45deg, #ff00cc, #3333ff){% elif user.role == 'admin_focus' %}linear-gradient(45deg, #00f2fe, #4facfe){% elif user.role == 'admin' %}#ec4899{% elif user.role == 'member' %}#10b981{% else %}#94a3b8{% endif %};">
                 {{ user.username[0]|upper }}
             </div>
             <div class="details">
@@ -18,14 +18,24 @@
     <td>
         <div class="status-tags">
             {% if user.role == 'developer' %}
-                <span class="badge badge-developer">ผู้พัฒนาเว็บ</span>
-            {% elif user.role == 'admin' or user.is_admin %}
-                <span class="badge badge-admin">แอดมิน</span>
+                <span class="rank-badge badge-developer">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    Developers
+                </span>
+            {% elif user.role == 'admin_miru' %}
+                <span class="rank-badge badge-admin-miru">ADMIN MIRU</span>
+            {% elif user.role == 'admin_focus' %}
+                <span class="rank-badge badge-admin-focus">ADMIN FOCUS</span>
+            {% elif user.role == 'admin_assistant' %}
+                <span class="rank-badge badge-admin-assistant">ผู้ช่วยงาน ADMIN</span>
+            {% elif user.role == 'admin' %}
+                <span class="rank-badge badge-admin">แอดมิน</span>
             {% elif user.role == 'member' %}
-                <span class="badge badge-member">เมมเบอร์</span>
+                <span class="rank-badge badge-member">MEMBER</span>
             {% else %}
-                <span class="badge badge-user">สมาชิกทั่วไป</span>
+                <span style="font-weight: 600; color: #aaa;">-</span>
             {% endif %}
+
             
             {% if user.is_banned %}
                 <span class="badge badge-banned">Banned</span>
@@ -44,8 +54,10 @@
                 <select name="role" class="role-select" onchange="this.form.submit()">
                     <option value="user" {% if user.role == 'user' %}selected{% endif %}>สมาชิกทั่วไป</option>
                     <option value="member" {% if user.role == 'member' %}selected{% endif %}>เมมเบอร์</option>
-                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>แอดมิน</option>
-                    <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>ผู้พัฒนาเว็บ</option>
+                    <option value="admin_assistant" {% if user.role == 'admin_assistant' %}selected{% endif %}>ผู้ช่วยงาน ADMIN</option>
+                    <option value="admin_focus" {% if user.role == 'admin_focus' %}selected{% endif %}>ADMIN FOCUS</option>
+                    <option value="admin_miru" {% if user.role == 'admin_miru' %}selected{% endif %}>ADMIN MIRU</option>
+                    <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developers</option>
                 </select>
             </form>
 
@@ -55,12 +67,15 @@
                title="Toggle Ban Status">
                 <span class="icon">🚫</span>
             </a>
-            <a href="{{ url_for('delete_user', id=user.id) }}" 
-               class="btn-action btn-delete"
-               onclick="return confirm('WARNING: Are you sure you want to PERMANENTLY delete user {{ user.username }}?')"
-               title="Delete User">
-                <span class="icon">🗑️</span>
-            </a>
+            <form action="{{ url_for('delete_user', id=user.id) }}" method="POST" style="margin:0;">
+                <button type="submit"
+                   class="btn-action btn-delete"
+                   onclick="return confirm('ลบ user {{ user.username }} ถาวร?')"
+                   title="Delete User"
+                   style="cursor:pointer; border:none;">
+                    <span class="icon">🗑️</span>
+                </button>
+            </form>
         </div>
     </td>
 </tr>
@@ -307,16 +322,13 @@ function filterUsers() {
     .user-id { font-size: 0.7rem; color: #aaa; }
 
     /* Badges */
-    .status-tags { display: flex; flex-direction: column; gap: 4px; }
-    .badge {
-        padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800;
-        text-transform: uppercase; width: fit-content;
+    .status-tags { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    
+    .badge-banned { 
+        background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; 
+        padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; width: fit-content;
     }
-    .badge-developer { background: #e0e7ff; color: #4338ca; }
-    .badge-admin { background: #fce7f3; color: #db2777; }
-    .badge-member { background: #d1fae5; color: #059669; }
-    .badge-user { background: #f1f5f9; color: #475569; }
-    .badge-banned { background: #fee2e2; color: #dc2626; }
+
 
     /* Activity */
     .activity-box {
