@@ -142,8 +142,8 @@ def inject_settings():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             if user.is_banned:
@@ -158,8 +158,8 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(username=username, password=hashed_password, is_admin=False)
         try:
@@ -806,6 +806,8 @@ def migrate():
         ('ticket_form', 'ticketing_platform', "VARCHAR(500)"),
         ('concert', 'status_badge', "VARCHAR(50) DEFAULT 'none'"),
         ('concert', 'is_open', "BOOLEAN DEFAULT TRUE"),
+        ('concert', 'date', "VARCHAR(200) DEFAULT ''"),
+        ('concert', 'location', "VARCHAR(500) DEFAULT ''"),
         ('ticket_form', 'created_at', "TIMESTAMP"),
         ('ticket_form', 'ticket_quantity', "VARCHAR(500) DEFAULT '1'")
     ]
@@ -883,6 +885,8 @@ with app.app_context():
             ('ticket_form', 'ticketing_platform', "VARCHAR(500)"),
             ('concert', 'status_badge', "VARCHAR(50) DEFAULT 'none'"),
             ('concert', 'is_open', "BOOLEAN DEFAULT TRUE"),
+            ('concert', 'date', "VARCHAR(200) DEFAULT ''"),
+            ('concert', 'location', "VARCHAR(500) DEFAULT ''"),
             ('ticket_form', 'created_at', "TIMESTAMP"),
             ('ticket_form', 'ticket_quantity', "VARCHAR(500) DEFAULT '1'")
         ]
