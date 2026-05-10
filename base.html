@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <!-- DEBUG BANNER - REMOVE AFTER VERIFICATION -->
+    <div style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999999;">
+        DEBUG: TEMPLATE UPDATED {{ range(100, 999)|random }}
+    </div>
+
     {% if announcement %}
     <div class="announcement-banner">
         <div class="banner-content">
