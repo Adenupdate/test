@@ -3,12 +3,7 @@
 {% block content %}
 <div class="auth-container">
     <div class="auth-card">
-        <div style="text-align: center; margin-bottom: 1rem;">
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}" 
-                 onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Adenticket'" 
-                 alt="Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3); border: 2px solid var(--primary-pink);">
-        </div>
-        <h2 style="text-align: center;">Login to 𝖠𝖽𝖾𝗇𝗍𝗂𝖼𝗄𝖾𝗍</h2>
+        <h2>Login to 𝖠𝖽𝖾𝗇𝗍𝗂𝖼𝗄𝖾𝗍</h2>
         <form action="{{ url_for('login') }}" method="POST" autocomplete="off">
             <input type="text" style="display:none" name="fake_usernameremembered" tabindex="-1">
             <input type="password" style="display:none" name="fake_passwordremembered" tabindex="-1">

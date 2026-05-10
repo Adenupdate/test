@@ -35,57 +35,25 @@
         </section>
 
         <!-- Announcement Control Section -->
-        <section class="admin-card full-width" style="background: linear-gradient(135deg, #fff5f7 0%, #fff 100%); border: 2px solid var(--primary-pink);">
-            <!-- Header -->
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem; flex-wrap: wrap;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #ff758c, #ffadb9); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(255,117,140,0.3);">📢</div>
-                <div style="flex: 1;">
-                    <h2 style="margin: 0; color: var(--deep-pink); border: none; padding: 0; font-size: 1.1rem;">ประกาศด่วน (Announcement Banner)</h2>
-                    <p style="margin: 2px 0 0; font-size: 0.82rem; color: #a08484;">ข้อความจะแสดงเป็นแถบวิ่งด้านบนสุดของทุกหน้า</p>
+        <section class="admin-card full-width" style="border: 2px dashed var(--primary-pink); background: #fffafa;">
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <h2 style="margin-bottom: 0.5rem; color: var(--deep-pink); border: none; padding-bottom: 0;">📢 ประกาศด่วน (Announcement Banner)</h2>
+                    <p style="margin: 0; font-size: 0.9rem; color: #666;">
+                        ข้อความที่ใส่ตรงนี้จะแสดงเป็นแถบวิ่งที่ด้านบนสุดของทุกหน้าเว็บ (ปล่อยว่างไว้หากไม่ต้องการแสดง)
+                    </p>
                 </div>
-                {% if announcement %}
-                <span style="background: #d4edda; color: #155724; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid #c3e6cb; white-space: nowrap;">🟢 กำลังแสดงอยู่</span>
-                {% else %}
-                <span style="background: #f8d7da; color: #721c24; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid #f5c6cb; white-space: nowrap;">⚫ ไม่มีประกาศ</span>
-                {% endif %}
-            </div>
-
-            <!-- Live Preview -->
-            {% if announcement %}
-            <div style="margin-bottom: 1.2rem; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,117,140,0.25);">
-                <div style="background: rgba(255,117,140,0.08); padding: 5px 12px; font-size: 0.75rem; font-weight: 700; color: var(--deep-pink); border-bottom: 1px solid rgba(255,117,140,0.15);">👁 Preview — ตัวอย่างที่จะแสดงบนเว็บ</div>
-                <div class="announcement-banner" style="position: static; border-radius: 0; margin: 0;">
-                    <div class="banner-content" style="padding: 0 15px;">
-                        <span class="banner-icon">📢</span>
-                        <div class="marquee-container" style="overflow: hidden;"><div class="marquee-text">{{ announcement }}</div></div>
+                <form action="{{ url_for('update_announcement') }}" method="POST" style="margin: 0; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                    <div style="flex-grow: 1; min-width: 300px;">
+                        <textarea name="announcement_text" placeholder="พิมพ์ข้อความประกาศที่นี่..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #f0d0dc; font-family: inherit; font-size: 0.95rem; min-height: 80px;">{{ announcement }}</textarea>
                     </div>
-                </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="admin-btn" style="width: auto; margin-top: 0; padding: 0.8rem 2.5rem;">💾 อัปเดตประกาศ</button>
+                        <button type="button" onclick="clearAnnouncement()" class="admin-btn" style="width: auto; margin-top: 0; padding: 0.8rem 1.5rem; background: #ff4d4d;">🗑️ ลบประกาศ</button>
+                    </div>
+                </form>
             </div>
-            {% endif %}
-
-            <!-- Update Form -->
-            <form action="{{ url_for('update_announcement') }}" method="POST">
-                <textarea name="announcement_text"
-                    placeholder="พิมพ์ข้อความประกาศที่นี่... (เว้นว่างแล้วกด บันทึก เพื่อซ่อนประกาศ)"
-                    style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1.5px solid #f0d0dc; font-family: inherit; font-size: 0.95rem; min-height: 70px; box-sizing: border-box; resize: vertical;">{{ announcement }}</textarea>
-                <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
-                    <button type="submit"
-                        style="background: linear-gradient(135deg, #ff758c, #ff4b6e); color: #fff; border: none; padding: 0.7rem 2rem; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(255,117,140,0.4);">
-                        💾 บันทึกประกาศ
-                    </button>
-                </div>
-            </form>
-
-            <!-- Delete Form — MUST be outside the update form -->
-            <form action="{{ url_for('delete_announcement') }}" method="POST" style="margin-top: 10px; display: flex; justify-content: flex-start;">
-                <button type="submit"
-                    onclick="return confirm('ลบประกาศออกจากเว็บไซต์?')"
-                    style="color: #e11d48; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 8px 14px; border: 1.5px solid #fecaca; border-radius: 10px; background: #fff5f5;">
-                    🗑️ ลบประกาศ
-                </button>
-            </form>
         </section>
-
 
         <!-- Manage Concerts Section -->
         <section class="admin-card">
@@ -114,14 +82,6 @@
                         <option value="coming_soon">เร็วๆ นี้ (Coming Soon)</option>
                         <option value="now_open">เปิดจองแล้ว (Now Open)</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label>Concert Date (e.g. 24-25 May 2024)</label>
-                    <input type="text" name="date" placeholder="วันเริ่มงาน หรือ ช่วงเวลา">
-                </div>
-                <div class="form-group">
-                    <label>Venue / Location (สถานที่จัดงาน)</label>
-                    <input type="text" name="location" placeholder="เช่น อิมแพ็ค อารีน่า">
                 </div>
                 <div class="form-group">
                     <label>Upload Image File</label>
@@ -156,12 +116,7 @@
                         </a>
                         
                         <button class="edit-btn" onclick="toggleEdit({{ concert.id }})">✏️ Edit</button>
-                        <form action="{{ url_for('delete_concert', id=concert.id) }}" method="POST" style="margin:0; display:inline;">
-                            <button type="submit" class="delete-btn"
-                                onclick="return confirm('ลบคอนเสิร์ตนี้?')">
-                                🗑️ Delete
-                            </button>
-                        </form>
+                        <a href="{{ url_for('delete_concert', id=concert.id) }}" class="delete-btn" onclick="return confirm('Delete this concert?')">🗑️ Delete</a>
                     </div>
                 </div>
                 <!-- Inline Edit Form -->
@@ -198,14 +153,6 @@
                                     <option value="True" {% if concert.is_open %}selected{% endif %}>เปิดจอง (Open)</option>
                                     <option value="False" {% if not concert.is_open %}selected{% endif %}>ปิดจอง (Closed)</option>
                                 </select>
-                            </div>
-                            <div class="edit-field">
-                                <label>Date</label>
-                                <input type="text" name="date" value="{{ concert.date }}">
-                            </div>
-                            <div class="edit-field">
-                                <label>Location</label>
-                                <input type="text" name="location" value="{{ concert.location }}">
                             </div>
                         </div>
                         <div style="display:flex; gap:10px; margin-top:12px;">
@@ -507,6 +454,20 @@ function toggleEdit(id) {
     panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
 }
 
+function clearAnnouncement() {
+    if(confirm('ต้องการลบประกาศทั้งหมดใช่หรือไม่?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{ url_for('update_announcement') }}";
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'announcement_text';
+        input.value = '';
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}
 
