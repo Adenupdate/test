@@ -79,8 +79,15 @@
             .overlay { padding-top: 10vh !important; }
             .form-modal { margin-top: 0 !important; }
             
-            /* บังคับซ่อน Navbar เดิมของ Desktop เมื่ออยู่บนมือถือ (แก้ปัญหาเมนูไม่เปลี่ยน) */
-            body > nav:not(.bottom-nav) { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+            /* บังคับซ่อน Navbar เดิมและองค์ประกอบทั้งหมดของ Desktop เมื่ออยู่บนมือถือ */
+            #desktop-nav, nav, .nav-links, .brand-name, .nav-btn { 
+                display: none !important; 
+                visibility: hidden !important; 
+                height: 0 !important; 
+                margin: 0 !important; 
+                padding: 0 !important;
+                pointer-events: none !important;
+            }
             
             /* ปรับแต่งแถบเมนูใหม่ให้เหมือนต้นฉบับ (Bottom Nav Replicated) */
             .bottom-nav {
@@ -159,7 +166,7 @@
         </div>
     </div>
     {% endif %}
-    <nav>
+    <nav id="desktop-nav">
         <a href="/" class="brand-name">
             <img src="{{ url_for('static', filename='images/logo.jpg') }}"
                 onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Adenticket'" alt="Logo"
