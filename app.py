@@ -168,7 +168,11 @@ def register():
             flash('Registration successful!')
             return redirect(url_for('login'))
         except Exception as e:
-            flash(f'Error: {str(e)}')
+            db.session.rollback()
+            if 'UNIQUE constraint failed' in str(e) or 'unique constraint' in str(e).lower():
+                flash('ชื่อผู้ใช้นี้ถูกใช้งานแล้ว กรุณาเลือกชื่ออื่น', 'error')
+            else:
+                flash(f'Error: {str(e)}', 'error')
     return render_template('register.html')
 
 @app.route('/profile/update', methods=['POST'])
