@@ -187,7 +187,7 @@
             style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px; border-radius: 30px; text-decoration: none; transition: 0.3s; line-height: 1.2; vertical-align: middle;">
             <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
                 alt="Profile"
-                style="width: 24px; height: 24px; border-radius: 50%; background: #fff; display: block; object-fit: cover;">
+                style="width: 28px; height: 28px; border-radius: 8px; background: #fff; display: block; object-fit: cover;">
             <span class="user-name-glow"
                 style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left;">
                 {{ current_user.nickname or current_user.username }}
