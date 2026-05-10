@@ -7,113 +7,64 @@
     <title>Aden_ticket | Ticket Booking</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1000, 9999)|random }}">
     <style>
-        /* 📢 Announcement Animation Fix */
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        /* 📢 Marquee Fix */
+        .marquee-container { width: 100%; overflow: hidden; white-space: nowrap; }
         .marquee-text {
             display: inline-block;
             padding-left: 100%;
             animation: marquee 20s linear infinite;
-            white-space: nowrap;
-            will-change: transform;
         }
-        .marquee-container {
-            overflow: hidden;
-            width: 100%;
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
         }
 
-        /* 🎖️ Dynamic Profile Pill (Colors match Rank) */
+        /* 🎖️ Profile Pill (Corrected Rank Colors with Underscores) */
         .profile-pill {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 6px 18px 6px 8px;
+            background: linear-gradient(135deg, #ff8da1 0%, #ff4b6e 100%);
+            padding: 5px 15px 5px 6px;
             border-radius: 50px;
             border: 1px solid rgba(255, 255, 255, 0.4);
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(255, 75, 110, 0.3);
             cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
         }
 
-        /* Rank Colors for Pill Background */
-        .pill-developer { background: linear-gradient(135deg, #ff758c 0%, #ff4b6e 100%); box-shadow: 0 4px 15px rgba(255, 75, 110, 0.4); }
-        .pill-admin-miru { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4); }
-        .pill-admin-focus { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
-        .pill-admin-assistant { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); box-shadow: 0 4px 15px rgba(142, 68, 173, 0.4); }
-        .pill-admin { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); box-shadow: 0 4px 15px rgba(30, 60, 114, 0.4); }
-        .pill-member { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
-        .pill-user { background: linear-gradient(135deg, #8c6b78 0%, #5d4a52 100%); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .pill-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+        .pill-info { display: flex; flex-direction: column; line-height: 1.1; }
+        .pill-name { color: #fff; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; }
 
-        .profile-pill:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .pill-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            object-fit: cover;
-        }
-
-        .pill-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            line-height: 1;
-        }
-
-        .pill-name {
-            color: #fff;
-            font-size: 0.95rem;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .pill-rank {
-            background: rgba(255, 255, 255, 0.95);
-            color: inherit; /* Fallback */
+        .pill-rank-badge {
             font-size: 9px;
-            padding: 2px 8px;
+            padding: 1px 8px;
             border-radius: 4px;
             font-weight: 900;
-            margin-top: 3px;
+            margin-top: 2px;
             text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #fff !important;
+            width: fit-content;
         }
 
-        /* Dynamic Rank Badge Text Color to match Pill */
-        .pill-developer .pill-rank { color: #ff4b6e; }
-        .pill-admin-miru .pill-rank { color: #56ab2f; }
-        .pill-admin-focus .pill-rank { color: #ff416c; }
-        .pill-admin-assistant .pill-rank { color: #8e44ad; }
-        .pill-admin .pill-rank { color: #1e3c72; }
-        .pill-member .pill-rank { color: #4facfe; }
-        .pill-user .pill-rank { color: #8c6b78; }
+        /* Matches app.py roles exactly */
+        .rank_bg_developer { background: #ff758c; }
+        .rank_bg_admin_miru { background: #56ab2f; }
+        .rank_bg_admin_focus { background: #ff416c; }
+        .rank_bg_admin_assistant { background: #8e44ad; }
+        .rank_bg_admin { background: #1e3c72; }
+        .rank_bg_member { background: #4facfe; }
+        .rank_bg_user { background: #8c6b78; }
 
-        /* 📱 Mobile Nav Adjustments */
-        .mobile-nav-bar {
-            display: none;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 117, 140, 0.2);
-            z-index: 9999;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
+        /* Mobile Adjustments */
         @media (max-width: 1024px) {
             .desktop-only { display: none !important; }
             .mobile-nav-bar { display: flex; }
             body { padding-bottom: 80px; }
-            .floating-guide-btn { bottom: 90px !important; top: auto !important; transform: none !important; right: 10px !important; border-radius: 50px !important; }
         }
+        
+        .main-wrapper { min-height: 80vh; padding-bottom: 40px; }
     </style>
 </head>
 
@@ -123,25 +74,18 @@
     <div class="announcement-banner">
         <div class="banner-content">
             <span class="banner-icon">📢</span>
-            <div class="marquee-container">
-                <div class="marquee-text">
-                    {{ announcement }}
-                </div>
-            </div>
+            <div class="marquee-container"><div class="marquee-text">{{ announcement }}</div></div>
         </div>
     </div>
     {% endif %}
 
     <nav>
         <a href="/" class="brand-name">
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}"
-                onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Adenticket'" alt="Logo"
-                class="brand-logo">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Adenticket'" alt="Logo" class="brand-logo">
             Aden_ticket
         </a>
         <ul class="nav-links desktop-only">
             <li><a href="/" class="nav-btn"><span class="nav-text">หน้าแรก</span></a></li>
-            
             {% if current_user.is_actually_admin %}
                 <li><a href="{{ url_for('admin') }}" class="nav-btn"><span class="nav-text">แอดมิน</span></a></li>
                 <li><a href="{{ url_for('admin_submissions') }}" class="nav-btn"><span class="nav-text">รายการจอง</span></a></li>
@@ -153,13 +97,12 @@
             {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('my_bookings') }}" class="nav-btn"><span class="nav-text">ของฉัน</span></a></li>
             
-            <!-- 🎖️ Profile Pill (Match the image and Rank color) -->
-            <li style="margin-left: 10px;">
-                <div onclick="openProfileModal()" class="profile-pill pill-{{ current_user.role if current_user.role else 'user' }}">
+            <li style="margin-left: 5px;">
+                <div onclick="openProfileModal()" class="profile-pill">
                     <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" class="pill-avatar">
                     <div class="pill-info">
                         <span class="pill-name">{{ current_user.username }}</span>
-                        <span class="pill-rank">
+                        <span class="pill-rank-badge rank_bg_{{ current_user.role if current_user.role else 'user' }}">
                             {% if current_user.role == 'developer' %}DEVELOPERS
                             {% elif current_user.role == 'admin_miru' %}ADMIN MIRU
                             {% elif current_user.role == 'admin_focus' %}ADMIN FOCUS
@@ -193,110 +136,78 @@
     {% endif %}
     {% endwith %}
 
-    <main>
+    <div class="main-wrapper">
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
     <footer class="main-footer">
         <div class="footer-content">
-            <div class="footer-brand">
-                <img src="{{ url_for('static', filename='images/logo.jpg') }}" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Adenticket'" alt="Logo" class="footer-logo">
-                <h2 class="footer-title">Aden ticket</h2>
-                <p class="footer-subtitle">รายละเอียดการจองคิวกดบัตร</p>
-            </div>
+            <div class="footer-brand"><h2 class="footer-title">Aden ticket</h2></div>
             <div class="footer-grid">
-                <div class="footer-info-box"><h3>วิธีการจองคิว</h3><p>ทักข้อความมาทางทวิตร้านโดยตรง ส่งรายละเอียดงานที่จะฝากกด...</p></div>
-                <div class="footer-info-box"><h3>กรณีลูกค้ากดบัตรชน</h3><p>หากลูกค้ากดบัตรได้เองเช่นกัน ลูกค้าต้องรีบแจ้งทางร้านก่อน...</p></div>
-                <div class="footer-info-box"><h3>หากทางร้านกดได้แล้วไม่รับ</h3><p>ลูกค้าต้องจ่ายค่ากดบัตรเต็มจำนวนให้ทางร้านเช่นเดิม</p></div>
+                <div class="footer-info-box"><h3>วิธีการจองคิว</h3><p>ทักข้อความมาทางทวิตร้าน...</p></div>
+                <div class="footer-info-box"><h3>กรณีลูกค้ากดบัตรชน</h3><p>หากลูกค้ากดบัตรได้เองเช่นกัน...</p></div>
+                <div class="footer-info-box"><h3>หากไม่รับบัตร</h3><p>ต้องจ่ายค่ากดเต็มจำนวน...</p></div>
             </div>
         </div>
-        <div class="footer-bottom"><p>&copy; 2026 Aden ticket. All rights reserved.</p></div>
     </footer>
 
     <!-- Floating Guide -->
     <button class="floating-guide-btn" onclick="openGuideModal()">
-        <div class="guide-icon-wrapper">
-            <svg viewBox="0 0 100 100" class="nav-guide-icon"><circle cx="50" cy="35" r="25" fill="currentColor"/><path d="M20 90 C 20 65, 80 65, 80 90" fill="currentColor"/></svg>
-        </div>
-        วิธีจองคิวกดบัตร
+        <div class="guide-icon-wrapper"><svg viewBox="0 0 100 100"><circle cx="50" cy="35" r="25" fill="currentColor"/><path d="M20 90 C 20 65, 80 65, 80 90" fill="currentColor"/></svg></div>
+        วิธีจองคิว
     </button>
 
     <!-- Mobile Nav -->
-    <div class="mobile-nav-bar">
-        <a href="/" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path></svg><span>หน้าแรก</span></a>
-        <a href="{{ url_for('concerts_page') }}" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 15v3a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3M2 12h20"></path></svg><span>จองบัตร</span></a>
+    <div class="mobile-nav-bar" style="display: none;">
+        <a href="/" class="mobile-nav-item"><span>หน้าแรก</span></a>
+        <a href="{{ url_for('concerts_page') }}" class="mobile-nav-item"><span>จองบัตร</span></a>
         {% if current_user.is_authenticated %}
-            <a href="{{ url_for('my_bookings') }}" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>การจอง</span></a>
-            <a href="#" onclick="openProfileModal(); return false;" class="mobile-nav-item">
-                <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;"><span>โปรไฟล์</span>
-            </a>
+            <a href="{{ url_for('my_bookings') }}" class="mobile-nav-item"><span>การจอง</span></a>
+            <a href="#" onclick="openProfileModal(); return false;" class="mobile-nav-item"><span>โปรไฟล์</span></a>
         {% else %}
-            <a href="{{ url_for('login') }}" class="mobile-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg><span>เข้าสู่ระบบ</span></a>
+            <a href="{{ url_for('login') }}" class="mobile-nav-item"><span>เข้าสู่ระบบ</span></a>
         {% endif %}
     </div>
 
     <!-- Modals -->
     <div id="guideModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 3000;">
-        <div class="form-modal" style="width: 92%; max-width: 650px; padding: 2rem; background: #fffafa; border: 2px solid var(--primary-pink);">
+        <div class="form-modal" style="width: 90%; max-width: 600px; padding: 2rem; background: #fff;">
             <span class="close-btn" onclick="closeGuideModal()" style="position: absolute; right: 20px; top: 15px; font-size: 2rem; cursor: pointer;">&times;</span>
-            <h2 style="color: var(--deep-pink); text-align: center; margin-bottom: 1.5rem; font-weight: 800;">คู่มือการใช้งาน</h2>
-            <div style="text-align: center; display: flex; flex-direction: column; gap: 20px;">
-                <img src="{{ url_for('static', filename='images/guide1.jpg') }}" style="width: 100%; border-radius: 18px;">
-                <img src="{{ url_for('static', filename='images/guide2.jpg') }}" style="width: 100%; border-radius: 18px;">
-            </div>
+            <div style="text-align: center;"><img src="{{ url_for('static', filename='images/guide1.jpg') }}" style="width: 100%; border-radius: 12px;"></div>
         </div>
     </div>
 
     {% if current_user.is_authenticated %}
     <div id="profileModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 4000;">
-        <div class="form-modal" style="width: 90%; max-width: 400px; padding: 2rem; background: #fff; border-radius: 24px;">
-            <span class="close-btn" onclick="closeProfileModal()" style="position: absolute; right: 20px; top: 15px; font-size: 1.8rem; color: #aaa; cursor: pointer;">&times;</span>
-            <h2 style="color: var(--deep-pink); text-align: center; margin-bottom: 1.5rem; font-weight: 800;">My Profile</h2>
+        <div class="form-modal" style="width: 90%; max-width: 400px; padding: 2rem; background: #fff; border-radius: 20px;">
+            <span class="close-btn" onclick="closeProfileModal()" style="position: absolute; right: 20px; top: 15px; font-size: 1.8rem; cursor: pointer;">&times;</span>
+            <h2 style="color: var(--deep-pink); text-align: center;">My Profile</h2>
             <form action="{{ url_for('update_profile') }}" method="POST" enctype="multipart/form-data">
-                <div style="text-align: center; margin-bottom: 1.5rem; position: relative;">
-                    <img id="profilePreview" src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-                    <label for="profile_image_input" style="position: absolute; bottom: 0; left: 50%; transform: translateX(25px); background: var(--primary-pink); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" /></svg></label>
-                    <input type="file" id="profile_image_input" name="profile_image" style="display: none;" accept="image/*" onchange="previewProfileImage(this)">
-                </div>
-                <div class="form-group"><label>Nickname</label><input type="text" name="nickname" value="{{ current_user.nickname or '' }}" style="width: 100%; padding: 10px; border-radius: 12px; border: 1.5px solid #eee;"></div>
-                <div class="form-group"><label>Status</label><input type="text" name="status_text" value="{{ current_user.status_text or '' }}" style="width: 100%; padding: 10px; border-radius: 12px; border: 1.5px solid #eee;"></div>
-                <button type="submit" class="submit-btn" style="width: 100%; border-radius: 12px; padding: 12px; margin-top: 15px;">Save</button>
+                <div style="text-align: center;"><img id="profilePreview" src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></div>
+                <div class="form-group"><label>Nickname</label><input type="text" name="nickname" value="{{ current_user.nickname or '' }}" style="width: 100%; padding: 8px; border-radius: 10px; border: 1px solid #eee;"></div>
+                <button type="submit" class="submit-btn" style="width: 100%; padding: 10px; margin-top: 10px;">Save</button>
             </form>
         </div>
     </div>
     {% endif %}
 
-    <div id="confirmModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 3500;">
-        <div class="form-modal" style="text-align: center; padding: 2.5rem; width: 92%; max-width: 420px; background: #fff; border-radius: 24px;">
-            <h2 style="color: var(--deep-pink);">ยืนยันข้อมูล</h2><p>กรุณาเช็คข้อมูลให้ครบถ้วนก่อนกดส่ง</p>
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-                <button onclick="closeConfirmModal()" class="submit-btn" style="flex: 1; background: #f3f3f3; color: #777;">เช็คอีกรอบ</button>
-                <button id="finalSubmitBtn" class="submit-btn" style="flex: 1.5;">ยืนยันส่งข้อมูล</button>
-            </div>
-        </div>
-    </div>
-
     <div id="successModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 3000;">
-        <div class="form-modal" style="text-align: center; padding: 3rem; width: 92%; max-width: 450px; background: #fff; border-radius: 24px; border: 3px solid var(--primary-pink);">
-            <div style="margin-bottom: 1.5rem; position: relative; width: 100px; height: 100px; margin: 0 auto 1.5rem;">
-                <img src="{{ url_for('static', filename='images/success_frame_final.png') }}" style="width: 100%;">
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-            </div>
-            <h2>ดำเนินการสำเร็จ</h2><p id="successModalText">ขอบคุณที่ใช้บริการค่ะ.</p>
-            <button onclick="document.getElementById('successModal').style.display='none'" class="submit-btn" style="width: 100%; border-radius: 12px;">ตกลง (Close)</button>
+        <div class="form-modal" style="text-align: center; padding: 2rem; background: #fff; border-radius: 20px; border: 2px solid var(--primary-pink);">
+            <h2>ดำเนินการสำเร็จ</h2>
+            <button onclick="document.getElementById('successModal').style.display='none'" class="submit-btn" style="width: 100%; margin-top: 15px;">ตกลง</button>
         </div>
     </div>
 
     <script>
         let pendingForm = null;
-        function openForm(concertName, concertImage, concertPrice) {
+        function openForm(cn, ci, cp) {
             {% if not current_user.is_authenticated %} window.location.href = "{{ url_for('login') }}"; return; {% endif %}
             const ni = document.getElementById('concert_name_input');
             if(ni) {
-                ni.value = concertName;
-                document.getElementById('modal_concert_name').innerText = concertName;
-                document.getElementById('modal_concert_img').src = concertImage;
-                document.getElementById('modal_concert_price').innerText = "THB " + concertPrice;
+                ni.value = cn;
+                document.getElementById('modal_concert_name').innerText = cn;
+                document.getElementById('modal_concert_img').src = ci;
+                document.getElementById('modal_concert_price').innerText = "THB " + cp;
                 document.getElementById('formOverlay').style.display = 'flex';
             }
         }
@@ -305,15 +216,11 @@
         function closeGuideModal() { document.getElementById('guideModal').style.display = 'none'; }
         function openProfileModal() { const p = document.getElementById('profileModal'); if(p) p.style.display = 'flex'; }
         function closeProfileModal() { const p = document.getElementById('profileModal'); if(p) p.style.display = 'none'; }
-        function previewProfileImage(input) { if (input.files && input.files[0]) { var r = new FileReader(); r.onload = function(e){document.getElementById('profilePreview').src=e.target.result;}; r.readAsDataURL(input.files[0]); } }
-        function handleOrderSubmit(e) { e.preventDefault(); pendingForm = e.target; document.getElementById('confirmModal').style.display = 'flex'; }
-        function closeConfirmModal() { document.getElementById('confirmModal').style.display = 'none'; pendingForm = null; }
-
-        window.addEventListener('click', function(e) { if (e.target.classList.contains('overlay')) { e.target.style.display = 'none'; if(e.target.id==='confirmModal')pendingForm=null; } });
+        
+        window.addEventListener('click', function(e) { if (e.target.classList.contains('overlay')) { e.target.style.display = 'none'; } });
         document.addEventListener('DOMContentLoaded', function() {
-            const fb = document.getElementById('finalSubmitBtn'); if(fb) fb.addEventListener('click', function(){ if(pendingForm) pendingForm.submit(); });
             const cp = window.location.pathname; document.querySelectorAll('.mobile-nav-item').forEach(l=>{ if(l.getAttribute('href')===cp) l.classList.add('active'); });
-            {% with messages = get_flashed_messages(category_filter=["success_modal"]) %} {% if messages %} const sm=document.getElementById('successModal'); if(sm) sm.style.display='flex'; {% endif %} {% endwith %}
+            {% with messages = get_flashed_messages(category_filter=["success_modal"]) %} if ({{ messages|length }} > 0) { const sm=document.getElementById('successModal'); if(sm) sm.style.display='flex'; } {% endwith %}
         });
     </script>
 </body>
