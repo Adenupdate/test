@@ -422,10 +422,8 @@
 
     <!-- Profile Update Modal -->
     {% if current_user.is_authenticated %}
-    <div id="profileModal" class="overlay"
-        style="display: none; align-items: center; justify-content: center; z-index: 4000;">
-        <div class="form-modal"
-            style="width: 90%; max-width: 320px; padding: 1.2rem; background: #fff; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+    <div id="profileModal" class="overlay" style="display: none; align-items: center; justify-content: center; z-index: 4000;">
+        <div class="form-modal">
             <span class="close-btn" onclick="closeProfileModal()"
                 style="position: absolute; right: 20px; top: 15px; font-size: 1.3rem; color: #aaa;">&times;</span>
             <h2 style="color: var(--deep-pink); text-align: center; margin-bottom: 0.8rem; font-weight: 800; font-size: 1.2rem;">My Profile</h2>
