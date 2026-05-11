@@ -210,27 +210,30 @@
                 alt="Profile"
                 style="width: 26px !important; height: 26px !important; border-radius: 50% !important; background: #fff !important; display: block !important; object-fit: cover !important; border: 1.5px solid rgba(255,255,255,0.4) !important;">
             
-            <span class="user-name-glow" style="color: #fff !important; text-shadow: 0 0 8px rgba(255, 255, 255, 0.5) !important; font-weight: 700 !important; font-size: 0.9rem !important; display: block !important;">
-                {{ current_user.nickname or current_user.username }}
-                {% if current_user.role != 'user' %}
-                <span class="rank-badge 
-                        {% if current_user.role == 'developer' %}badge-developer
-                        {% elif current_user.role == 'admin_miru' %}badge-admin-miru
-                        {% elif current_user.role == 'admin_focus' %}badge-admin-focus
-                        {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
-                        {% elif current_user.role == 'admin' %}badge-admin
-                        {% elif current_user.role == 'member' %}badge-member{% endif %}"
-                    style="font-size: 0.65rem !important; padding: 2px 8px !important; margin-left: 5px !important; vertical-align: middle !important; display: inline-flex !important; align-items: center !important; gap: 3px !important; height: 20px !important; border-radius: 8px !important; background: rgba(0,0,0,0.2) !important; border: 1px solid rgba(255,255,255,0.3) !important; color: #fff !important;">
-                    {% if current_user.role == 'developer' %}DEV
-                    {% elif current_user.role == 'admin_miru' %}MIRU
-                    {% elif current_user.role == 'admin_focus' %}FOCUS
-                    {% elif current_user.role == 'admin_assistant' %}AST
-                    {% elif current_user.role == 'admin' %}ADMIN
-                    {% elif current_user.role == 'admin_focus' %}MOD
-                    {% elif current_user.role == 'member' %}VIP{% endif %}
+            <div style="display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 2px !important; overflow: hidden !important;">
+                <span class="user-name-glow" style="color: #fff !important; text-shadow: 0 0 8px rgba(255, 255, 255, 0.5) !important; font-weight: 700 !important; font-size: 0.9rem !important; display: block !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 100px !important;">
+                    {{ current_user.nickname or current_user.username }}
                 </span>
+                {% if current_user.role != 'user' %}
+                <div style="display: block !important;">
+                    <span class="rank-badge 
+                            {% if current_user.role == 'developer' %}badge-developer
+                            {% elif current_user.role == 'admin_miru' %}badge-admin-miru
+                            {% elif current_user.role == 'admin_focus' %}badge-admin-focus
+                            {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
+                            {% elif current_user.role == 'admin' %}badge-admin
+                            {% elif current_user.role == 'member' %}badge-member{% endif %}"
+                        style="font-size: 0.6rem !important; padding: 1px 7px !important; vertical-align: middle !important; display: inline-flex !important; align-items: center !important; gap: 3px !important; height: 16px !important; border-radius: 6px !important; background: rgba(0,0,0,0.2) !important; border: 1px solid rgba(255,255,255,0.3) !important; color: #fff !important; width: fit-content !important;">
+                        {% if current_user.role == 'developer' %}DEV
+                        {% elif current_user.role == 'admin_miru' %}MIRU
+                        {% elif current_user.role == 'admin_focus' %}FOCUS
+                        {% elif current_user.role == 'admin_assistant' %}AST
+                        {% elif current_user.role == 'admin' %}ADMIN
+                        {% elif current_user.role == 'member' %}VIP{% endif %}
+                    </span>
+                </div>
                 {% endif %}
-            </span>
+            </div>
         </a>
     </div>
     {% endif %}
@@ -316,38 +319,41 @@
                     <img src="{{ url_for('static', filename=current_user.profile_image if current_user.profile_image else 'images/profile_default.jpg') }}"
                         alt="Profile"
                         style="width: 24px; height: 24px; border-radius: 50%; background: #fff; display: block; object-fit: cover;">
-                    <span class="user-name-glow"
-                        style="font-weight: 700; font-size: 0.85rem; display: block; transform: translateY(-1px); text-align: left;">
-                        {{ current_user.nickname or current_user.username }}
-                        {% if current_user.role != 'user' %}
-                        <span class="rank-badge 
-                                {% if current_user.role == 'developer' %}badge-developer
-                                {% elif current_user.role == 'admin_miru' %}badge-admin-miru
-                                {% elif current_user.role == 'admin_focus' %}badge-admin-focus
-                                {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
-                                {% elif current_user.role == 'admin' %}badge-admin
-                                {% elif current_user.role == 'member' %}badge-member{% endif %}"
-                            style="font-size: 0.6rem; padding: 1px 6px; margin-left: 5px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
-                            {% if current_user.role == 'developer' %}
-                            <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
-                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="16 18 22 12 16 6"></polyline>
-                                <polyline points="8 6 2 12 8 18"></polyline>
-                            </svg>
-                            DEV
-                            {% elif current_user.role == 'admin_miru' %}MIRU
-                            {% elif current_user.role == 'admin_focus' %}FOCUS
-                            {% elif current_user.role == 'admin_assistant' %}AST
-                            {% elif current_user.role == 'admin' %}ADMIN
-                            {% elif current_user.role == 'member' %}MBR{% endif %}
-                        </span>
-                        {% endif %}
+                    <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.1;">
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <span class="user-name-glow"
+                                style="font-weight: 700; font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">
+                                {{ current_user.nickname or current_user.username }}
+                            </span>
+                            {% if current_user.role != 'user' %}
+                            <span class="rank-badge 
+                                    {% if current_user.role == 'developer' %}badge-developer
+                                    {% elif current_user.role == 'admin_miru' %}badge-admin-miru
+                                    {% elif current_user.role == 'admin_focus' %}badge-admin-focus
+                                    {% elif current_user.role == 'admin_assistant' %}badge-admin-assistant
+                                    {% elif current_user.role == 'admin' %}badge-admin
+                                    {% elif current_user.role == 'member' %}badge-member{% endif %}"
+                                style="font-size: 0.6rem; padding: 1px 6px; vertical-align: middle; display: inline-flex; align-items: center; gap: 3px; height: 18px; border-radius: 6px;">
+                                {% if current_user.role == 'developer' %}
+                                <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor"
+                                    stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                </svg>
+                                DEV
+                                {% elif current_user.role == 'admin_miru' %}MIRU
+                                {% elif current_user.role == 'admin_focus' %}FOCUS
+                                {% elif current_user.role == 'admin_assistant' %}AST
+                                {% elif current_user.role == 'admin' %}ADMIN
+                                {% elif current_user.role == 'member' %}MBR{% endif %}
+                            </span>
+                            {% endif %}
+                        </div>
                         {% if current_user.status_text %}
-                        <div style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9;">
+                        <div style="font-size: 0.65rem; color: #fff; font-weight: 500; margin-top: 2px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
                             {{ current_user.status_text }}</div>
                         {% endif %}
-
-                    </span>
+                    </div>
                 </a>
             </li>
             <li>
@@ -618,8 +624,8 @@
                 background: #fff0f0 !important;
             }
 
-            /* Hide profile details on mobile to save space */
-            .user-nav-frame {
+            /* Hide profile details in navigation links on mobile to save space */
+            .nav-links .user-nav-frame {
                 width: 45px !important;
                 height: 45px !important;
                 padding: 4px !important;
@@ -628,9 +634,9 @@
                 justify-content: center !important;
             }
 
-            .user-name-glow,
-            .rank-badge,
-            .user-nav-frame div {
+            .nav-links .user-name-glow,
+            .nav-links .rank-badge,
+            .nav-links .user-nav-frame div {
                 display: none !important;
             }
 
